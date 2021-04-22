@@ -1,0 +1,67 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="pages" author="antti.leinonen">
+        <createTable tableName="page">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="status" type="varchar(191)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="path" type="varchar(191)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="uri" type="varchar(191)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="createdat" type="datetime(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modifiedat" type="datetime(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creatorid" type="binary(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifierid" type="binary(16)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="contentblock" author="antti.leinonen">
+        <createTable tableName="contentblock">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="page_id" type="binary(16)">
+                <constraints nullable="false" foreignKeyName="FK_CONTENT_BLOCK_PAGE_ID" referencedColumnNames="id" referencedTableName="page"/>
+            </column>
+            <column name="layout" type="varchar(191)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="path" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="title" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="uri" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="textcontent" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="media" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="link" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
