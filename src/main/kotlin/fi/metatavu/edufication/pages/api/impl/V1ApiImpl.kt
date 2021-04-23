@@ -40,7 +40,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val translated = pageTranslator.translate(createdPage)
         translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
 
-        return createOk(createdPage)
+        return createOk(translated)
     }
 
     @Transactional
@@ -89,7 +89,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val translated = pageTranslator.translate(updatedPage!!)
         translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
 
-        return createOk(updatedPage)
+        return createOk(translated)
     }
 
     override fun ping(): Response {

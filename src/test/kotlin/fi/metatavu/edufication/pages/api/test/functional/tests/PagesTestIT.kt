@@ -74,14 +74,13 @@ class PagesTestIT {
 
             val updatedPage = Page(
                 status = PageStatus.pUBLIC,
-                uri = "aws.fi",
+                uri = "",
                 path = "/kurssit",
                 contentBlocks = arrayOf(updatedContent)
             )
 
             val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)
             assertEquals(updatedPage.status, update.status)
-            assertEquals(updatedPage.uri, update.uri)
             assertEquals(updatedPage.path, update.path)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.title, update.contentBlocks.getOrNull(0)?.title)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.layout, update.contentBlocks.getOrNull(0)?.layout)

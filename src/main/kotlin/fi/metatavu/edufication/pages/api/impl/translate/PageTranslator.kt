@@ -12,7 +12,7 @@ class PageTranslator: AbstractTranslator<Page, fi.metatavu.edufication.pages.api
         translated.createdAt = entity.createdAt
         translated.creatorId = entity.creatorId
         translated.path = entity.path
-        translated.uri = entity.uri
+        translated.uri = ""
         translated.status = entity.status
         translated.lastModifierId = entity.lastModifierId
         translated.modifiedAt = entity.modifiedAt
