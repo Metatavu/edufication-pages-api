@@ -1,16 +1,13 @@
 package fi.metatavu.edufication.pages.api.controller
 
-import fi.metatavu.edufication.pages.api.impl.translate.ContentBlockTranslator
-import fi.metatavu.edufication.pages.api.impl.translate.PageTranslator
-import fi.metatavu.edufication.pages.api.model.ContentBlock
+import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.model.PageStatus
 import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.PageDAO
-import fi.metatavu.edufication.pages.api.model.Page
+import fi.metatavu.edufication.pages.api.persistence.model.Page
 import java.util.*
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import javax.transaction.Transactional
 
 /**
  * Controller class for pages
@@ -29,21 +26,19 @@ class PagesController {
      *
      * @param status Page status
      * @param path Path to page
-     * @param uri Full uri path to page
-     * @param creatorId
-     * @param contentBlocks
+     * @param creatorId Creator Id
+     * @param contentBlocks Content Blocks for page
      *
      * @return created counter frame
      */
-    @Transactional
-    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<ContentBlock>): Page {
+    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>): Page {
         val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId)
 
-        val createdContentBlocks = contentBlocks.map {
+        contentBlocks.map {
             contentBlockDAO.create(
                 id = UUID.randomUUID(),
                 page = createdPage,
-                layout = it.layout,
+                layout = it.layout!!,
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
@@ -51,11 +46,7 @@ class PagesController {
             )
         }
 
-        val page = PageTranslator().translate(createdPage)
-        val content = ContentBlockTranslator().translate(createdContentBlocks)
-        page.contentBlocks = content
-
-        return page
+        return createdPage
     }
 
     /**
@@ -66,28 +57,27 @@ class PagesController {
      * @return Page or null if not found
      */
     fun findPage(pageId: UUID): Page? {
-        val page = pageDAO.findById(pageId) ?: return null
-        val translated = PageTranslator().translate(page)
-        translated.contentBlocks = getPageContent(page)
-
-        return translated
+        return pageDAO.findById(pageId)
     }
 
     /**
-     * Lists pages and filters with path if given
+     * Lists pages by path
      *
      * @param path path that must be contained in results path
      *
      * @return List of Pages
      */
-    fun listPages(path: String?): List<Page> {
-        var pages = pageDAO.listAll()
+    fun listPagesByPath(path: String): List<Page> {
+        return pageDAO.listAllByPath(path = path)
+    }
 
-        if (path != null) {
-            pages = pages.filter { it.path?.contains(path) == true }
-        }
-
-        return PageTranslator().translate(pages)
+    /**
+     * Lists all pages
+     *
+     * @return List of Pages
+     */
+    fun listAll(): List<Page> {
+        return pageDAO.listAll()
     }
 
     /**
@@ -96,30 +86,26 @@ class PagesController {
      * @param pageId Page id
      * @param status status
      * @param path page path
-     * @param uri page uri
      * @param modifierId modifierId
      * @param contentBlocks contentBlocks
      *
      * @return Updated Page
      */
-    @Transactional
-    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<ContentBlock>): Page? {
+    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>): Page? {
         val pageToUpdate = pageDAO.findById(pageId) ?: return null
 
-        pageToUpdate.status = status
-        pageToUpdate.path = path
-        pageToUpdate.lastModifierId = modifierId
-        val updatedPage = pageDAO.updatePage(pageToUpdate)
+        pageDAO.updatePath(pageToUpdate, path, modifierId)
+        val result = pageDAO.updateStatus(pageToUpdate, status, modifierId)
 
-        contentBlockDAO.listAll().forEach {
+        contentBlockDAO.listByPage(pageToUpdate).forEach {
             contentBlockDAO.delete(it)
         }
 
-        val createdContentBlocks = contentBlocks.map {
+        contentBlocks.map {
             contentBlockDAO.create(
                 id = UUID.randomUUID(),
                 page = pageToUpdate,
-                layout = it.layout,
+                layout = it.layout!!,
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
@@ -127,33 +113,27 @@ class PagesController {
             )
         }
 
-        val page = PageTranslator().translate(updatedPage)
-        val content = ContentBlockTranslator().translate(createdContentBlocks)
-        page.contentBlocks = content
-
-        return page
+        return result
     }
 
     /**
      * Deletes a page from the database
      *
-     * @param pageId page id to delete
+     * @param page page to delete
      */
-    fun deletePage(pageId: UUID) {
-        val pageToDelete = pageDAO.findById(pageId) ?: return
-
-        return pageDAO.delete(pageToDelete)
+    fun deletePage(page: Page) {
+        return pageDAO.delete(page)
     }
 
     /**
-     * Returns all content pages that belong to the given page
+     * Returns all content blocks that belong to the given page
      *
-     * @param page Page to find content for
+     * @param pageId Page Id to find content for
      *
      * @return List of ContentBlocks
      */
-    private fun getPageContent(page: fi.metatavu.edufication.pages.api.persistence.model.Page): List<ContentBlock> {
-        val pageContent = contentBlockDAO.listAll(page)
-        return ContentBlockTranslator().translate(pageContent)
+    fun getPageContent(pageId: UUID): List<ContentBlock> {
+        val page = pageDAO.findById(pageId) ?: return emptyList()
+        return contentBlockDAO.listByPage(page)
     }
 }

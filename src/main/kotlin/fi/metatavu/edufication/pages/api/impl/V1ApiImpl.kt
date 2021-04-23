@@ -1,6 +1,8 @@
 package fi.metatavu.edufication.pages.api.impl
 
 import fi.metatavu.edufication.pages.api.controller.PagesController
+import fi.metatavu.edufication.pages.api.impl.translate.ContentBlockTranslator
+import fi.metatavu.edufication.pages.api.impl.translate.PageTranslator
 import fi.metatavu.edufication.pages.api.model.Page
 import fi.metatavu.edufication.pages.api.spec.V1Api
 import org.hibernate.annotations.NotFound
@@ -8,6 +10,7 @@ import org.jboss.resteasy.util.NoContent
 import java.util.*
 import javax.enterprise.context.RequestScoped
 import javax.inject.Inject
+import javax.transaction.Transactional
 import javax.ws.rs.BadRequestException
 import javax.ws.rs.core.Response
 
@@ -17,6 +20,13 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     @Inject
     private lateinit var pagesController: PagesController
 
+    @Inject
+    private lateinit var pageTranslator: PageTranslator
+
+    @Inject
+    private lateinit var contentBlockTranslator: ContentBlockTranslator
+
+    @Transactional
     override fun createPage(page: Page): Response {
         val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
 
@@ -27,26 +37,44 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             page.contentBlocks
         )
 
+        val translated = pageTranslator.translate(createdPage)
+        translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
+
         return createOk(createdPage)
     }
 
+    @Transactional
     override fun deletePage(pageId: UUID): Response {
         val page = pagesController.findPage(pageId) ?: return createNotFound()
 
-        pagesController.deletePage(page.id)
+        pagesController.deletePage(page)
         return createNoContent()
     }
 
     override fun findPage(pageId: UUID): Response {
         val foundPage = pagesController.findPage(pageId) ?: return createNotFound(PAGE_NOT_FOUND_MESSAGE)
 
-        return createOk(foundPage)
+        val translated = pageTranslator.translate(foundPage)
+        translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
+
+        return createOk(translated)
     }
 
     override fun listPages(path: String?): Response {
-        return createOk(pagesController.listPages(path))
+        val pages = when(path != null) {
+            true -> pagesController.listPagesByPath(path)
+            else -> pagesController.listAll()
+        }
+        val translated = pageTranslator.translate(pages)
+
+        val pageList = translated.map {
+            it.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(it.id))
+        }
+
+        return createOk(pageList)
     }
 
+    @Transactional
     override fun updatePage(pageId: UUID, page: Page): Response {
         val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
 
@@ -57,6 +85,9 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             modifierId = userId,
             contentBlocks = page.contentBlocks
         )
+
+        val translated = pageTranslator.translate(updatedPage!!)
+        translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
 
         return createOk(updatedPage)
     }
