@@ -42,7 +42,7 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
      *
      * @return Content Block List
      */
-    fun listAll(page: Page): List<ContentBlock> {
+    fun listByPage(page: Page): List<ContentBlock> {
         val entityManager = getEntityManager()
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteria = criteriaBuilder.createQuery(ContentBlock::class.java)

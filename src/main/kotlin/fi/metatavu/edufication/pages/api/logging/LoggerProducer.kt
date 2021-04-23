@@ -8,7 +8,6 @@ import javax.enterprise.inject.spi.InjectionPoint
 
 /**
  * Producer for Logger object
- *
  */
 @Dependent
 class LoggerProducer {
