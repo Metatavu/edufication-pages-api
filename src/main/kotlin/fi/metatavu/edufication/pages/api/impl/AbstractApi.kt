@@ -115,8 +115,6 @@ abstract class AbstractApi {
             .status(Response.Status.NOT_FOUND)
             .build()
     }
-
-
     /**
      * Constructs not found response
      *
