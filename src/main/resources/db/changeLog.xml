@@ -11,10 +11,7 @@
             <column name="status" type="varchar(191)">
                 <constraints nullable="true"/>
             </column>
-            <column name="path" type="varchar(191)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="uri" type="varchar(191)">
+            <column name="path" type="longtext">
                 <constraints nullable="true"/>
             </column>
             <column name="createdat" type="datetime(6)">
@@ -43,13 +40,7 @@
             <column name="layout" type="varchar(191)">
                 <constraints nullable="false"/>
             </column>
-            <column name="path" type="longtext">
-                <constraints nullable="true"/>
-            </column>
-            <column name="title" type="longtext">
-                <constraints nullable="true"/>
-            </column>
-            <column name="uri" type="longtext">
+            <column name="title" type="varchar(191)">
                 <constraints nullable="true"/>
             </column>
             <column name="textcontent" type="longtext">

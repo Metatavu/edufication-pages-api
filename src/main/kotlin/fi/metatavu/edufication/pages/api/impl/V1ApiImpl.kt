@@ -17,33 +17,28 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     @Inject
     private lateinit var pagesController: PagesController
 
-    override fun createPage(page: Page?): Response {
-        val pageToCreate = page ?: return createBadRequest("Missing page payload!")
-
-        val userId = loggerUserId ?: return createUnauthorized("No valid user!")
+    override fun createPage(page: Page): Response {
+        val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
 
         val createdPage = pagesController.create(
-            pageToCreate.status,
-            pageToCreate.path,
-            pageToCreate.uri,
+            status = page.status,
+            path = page.path,
             userId,
-            pageToCreate.contentBlocks
+            page.contentBlocks
         )
 
         return createOk(createdPage)
     }
 
-    override fun deletePage(pageId: UUID?): Response {
-        val pageIdToFind = pageId ?: return createBadRequest("PageId missing!")
-        val page = pagesController.findPage(pageIdToFind) ?: return createNotFound("Page not found")
+    override fun deletePage(pageId: UUID): Response {
+        val page = pagesController.findPage(pageId) ?: return createNotFound()
 
         pagesController.deletePage(page.id)
         return createNoContent()
     }
 
-    override fun findPage(pageId: UUID?): Response {
-        val pageIdToFind = pageId ?: return createBadRequest("PageId missing!")
-        val foundPage = pagesController.findPage(pageIdToFind) ?: return createNotFound("Page not found")
+    override fun findPage(pageId: UUID): Response {
+        val foundPage = pagesController.findPage(pageId) ?: return createNotFound(PAGE_NOT_FOUND_MESSAGE)
 
         return createOk(foundPage)
     }
@@ -52,19 +47,15 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         return createOk(pagesController.listPages(path))
     }
 
-    override fun updatePage(pageId: UUID?, page: Page?): Response {
-        val pageToUpdate = page ?: return createBadRequest("Missing page")
-        val pageToUpdateId = pageId ?: return createBadRequest("Missing pageId")
-
-        val userId = loggerUserId ?: return createUnauthorized("No valid user!")
+    override fun updatePage(pageId: UUID, page: Page): Response {
+        val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
 
         val updatedPage = pagesController.update(
-            pageToUpdateId,
-            pageToUpdate.status,
-            pageToUpdate.path,
-            pageToUpdate.uri,
-            userId,
-            pageToUpdate.contentBlocks
+            pageId = pageId,
+            status = page.status,
+            path = page.path,
+            modifierId = userId,
+            contentBlocks = page.contentBlocks
         )
 
         return createOk(updatedPage)
@@ -72,5 +63,10 @@ class V1ApiImpl: V1Api, AbstractApi()  {
 
     override fun ping(): Response {
         return createOk("pong")
+    }
+
+    companion object {
+        const val NO_VALID_USER_MESSAGE = "No valid user!"
+        const val PAGE_NOT_FOUND_MESSAGE = "Page not found!"
     }
 }

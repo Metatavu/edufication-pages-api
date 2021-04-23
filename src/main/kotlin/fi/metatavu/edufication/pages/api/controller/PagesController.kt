@@ -36,8 +36,8 @@ class PagesController {
      * @return created counter frame
      */
     @Transactional
-    fun create (status: PageStatus, path: String, uri: String?, creatorId: UUID, contentBlocks: List<ContentBlock>): Page {
-        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, uri = uri, creatorId = creatorId)
+    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<ContentBlock>): Page {
+        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId)
 
         val createdContentBlocks = contentBlocks.map {
             contentBlockDAO.create(
@@ -103,11 +103,10 @@ class PagesController {
      * @return Updated Page
      */
     @Transactional
-    fun update(pageId: UUID, status: PageStatus, path: String, uri: String?, modifierId: UUID, contentBlocks: List<ContentBlock>): Page? {
+    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<ContentBlock>): Page? {
         val pageToUpdate = pageDAO.findById(pageId) ?: return null
 
         pageToUpdate.status = status
-        pageToUpdate.uri = uri
         pageToUpdate.path = path
         pageToUpdate.lastModifierId = modifierId
         val updatedPage = pageDAO.updatePage(pageToUpdate)
