@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Resource for testings Pages API
  *
- * @author Jari Nykänen
+ * @author Antti Leinonen
  */
 class PagesTestBuilderResource(
     testBuilder: TestBuilder,
