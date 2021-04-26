@@ -38,7 +38,7 @@ class PageDAO: AbstractDAO<Page>() {
      *
      * @return list of pages
      */
-    fun listAllByPath(path: String): List<Page> {
+    fun listByPath(path: String): List<Page> {
         val entityManager = getEntityManager()
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteria = criteriaBuilder.createQuery(Page::class.java)
