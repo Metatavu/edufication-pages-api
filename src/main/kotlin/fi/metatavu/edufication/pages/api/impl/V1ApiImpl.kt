@@ -23,9 +23,6 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     @Inject
     private lateinit var pageTranslator: PageTranslator
 
-    @Inject
-    private lateinit var contentBlockTranslator: ContentBlockTranslator
-
     @Transactional
     override fun createPage(page: Page): Response {
         val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
@@ -37,10 +34,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             contentBlocks = page.contentBlocks
         )
 
-        val translated = pageTranslator.translate(createdPage)
-        translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
-
-        return createOk(translated)
+        return createOk(pageTranslator.translate(createdPage))
     }
 
     @Transactional
@@ -54,24 +48,13 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     override fun findPage(pageId: UUID): Response {
         val foundPage = pagesController.findPage(pageId) ?: return createNotFound(PAGE_NOT_FOUND_MESSAGE)
 
-        val translated = pageTranslator.translate(foundPage)
-        translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
-
-        return createOk(translated)
+        return createOk(pageTranslator.translate(foundPage))
     }
 
     override fun listPages(path: String?): Response {
-        val pages = when(path != null) {
-            true -> pagesController.listPagesByPath(path)
-            else -> pagesController.listAll()
-        }
-        val translated = pageTranslator.translate(pages)
+        val pages = pagesController.listPages(path)
 
-        val pageList = translated.map {
-            it.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(it.id))
-        }
-
-        return createOk(pageList)
+        return createOk(pageTranslator.translate(pages))
     }
 
     @Transactional
@@ -86,10 +69,12 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             contentBlocks = page.contentBlocks
         )
 
-        val translated = pageTranslator.translate(updatedPage!!)
-        translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(translated.id))
-
-        return createOk(translated)
+        return if (updatedPage == null) {
+            createInternalServerError(PAGE_UPDATE_FAILED)
+        } else {
+            val translated = pageTranslator.translate(updatedPage)
+            createOk(translated)
+        }
     }
 
     override fun ping(): Response {
@@ -99,5 +84,6 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     companion object {
         const val NO_VALID_USER_MESSAGE = "No valid user!"
         const val PAGE_NOT_FOUND_MESSAGE = "Page not found!"
+        const val PAGE_UPDATE_FAILED = "Page update failed!"
     }
 }

@@ -61,23 +61,17 @@ class PagesController {
     }
 
     /**
-     * Lists pages by path
+     * List pages with optional path filter
      *
-     * @param path path that must be contained in results path
+     * @param path path that must be contained in page path
      *
-     * @return List of Pages
+     * @return list of pages
      */
-    fun listPagesByPath(path: String): List<Page> {
-        return pageDAO.listAllByPath(path = path)
-    }
-
-    /**
-     * Lists all pages
-     *
-     * @return List of Pages
-     */
-    fun listAll(): List<Page> {
-        return pageDAO.listAll()
+    fun listPages(path: String?): List<Page> {
+        return when (path != null) {
+            true -> listPagesByPath(path)
+            else -> listAll()
+        }
     }
 
     /**
@@ -122,18 +116,40 @@ class PagesController {
      * @param page page to delete
      */
     fun deletePage(page: Page) {
+        contentBlockDAO.listByPage(page).forEach {
+            contentBlockDAO.delete(it)
+        }
         return pageDAO.delete(page)
     }
 
     /**
      * Returns all content blocks that belong to the given page
      *
-     * @param pageId Page Id to find content for
+     * @param page Page to find content for
      *
      * @return List of ContentBlocks
      */
-    fun getPageContent(pageId: UUID): List<ContentBlock> {
-        val page = pageDAO.findById(pageId) ?: return emptyList()
+    fun getPageContent(page: Page): List<ContentBlock> {
         return contentBlockDAO.listByPage(page)
+    }
+
+    /**
+     * Lists pages by path
+     *
+     * @param path path that must be contained in results path
+     *
+     * @return List of Pages
+     */
+    private fun listPagesByPath(path: String): List<Page> {
+        return pageDAO.listByPath(path = path)
+    }
+
+    /**
+     * Lists all pages
+     *
+     * @return List of Pages
+     */
+    private fun listAll(): List<Page> {
+        return pageDAO.listAll()
     }
 }
