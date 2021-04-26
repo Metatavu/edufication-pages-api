@@ -70,8 +70,6 @@ class PagesTestIT {
                 link = "google.fi",
                 layout = ContentBlockLayout.sMALL
             )
-
-
             val updatedPage = Page(
                 status = PageStatus.pUBLIC,
                 uri = "",
