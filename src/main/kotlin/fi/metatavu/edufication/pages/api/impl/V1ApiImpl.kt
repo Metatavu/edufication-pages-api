@@ -33,8 +33,8 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val createdPage = pagesController.create(
             status = page.status,
             path = page.path,
-            userId,
-            page.contentBlocks
+            creatorId = userId,
+            contentBlocks = page.contentBlocks
         )
 
         val translated = pageTranslator.translate(createdPage)

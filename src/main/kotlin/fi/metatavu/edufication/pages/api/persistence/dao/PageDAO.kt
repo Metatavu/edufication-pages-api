@@ -62,17 +62,6 @@ class PageDAO: AbstractDAO<Page>() {
      *
      * @return updated page
      */
-    fun updatePage(page: Page): Page {
-        return persist(page)
-    }
-
-    /**
-     * Updates Page
-     *
-     * @param page Page to update
-     *
-     * @return updated page
-     */
     fun updatePath(page: Page, path: String?, modifierId: UUID): Page {
         page.path = path
         page.lastModifierId = modifierId
