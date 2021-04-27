@@ -33,7 +33,7 @@ steps:
             gu install native-image &&
             ./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true -x test
           else
-            docker build -f src/main/docker/Dockerfile.fast-jar -t ${_DOCKER_REPO_URL}:$(echo ${BUILD_ID} | cut -b 1-8) .
+            docker build -f src/main/docker/Dockerfile.jvm -t ${_DOCKER_REPO_URL}:$(echo ${BUILD_ID} | cut -b 1-8) .
           fi
         fi
   - name: 'gcr.io/cloud-builders/docker'
@@ -68,16 +68,3 @@ steps:
         aws eks update-kubeconfig --name ${_CLUSTER} --region=${_AWS_DEFAULT_REGION} &&
         kubectl -n ${_NAMESPACE} set image deployment/${_DEPLOYMENT} ${_DEPLOYMENT}=${_DOCKER_REPO_URL}:$(echo ${BUILD_ID} | cut -b 1-8)
       fi
-  - name: 'openjdk:11.0.10-jdk'
-    entrypoint: 'bash'
-    timeout: 1200s
-    env:
-      - "COVERALLS_REPO_TOKEN=${_COVERALLS_REPO_TOKEN}"
-      - "COVERALLS_SERVICE_NAME=CloudBuild"
-      - "COVERALLS_GIT_BRANCH=$BRANCH_NAME"
-    args:
-      - '-c'
-      - |
-        if [ -n "${_TEST}" ]; then
-          ./gradlew test coveralls
-        fi
