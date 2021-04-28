@@ -24,7 +24,6 @@ class S3TestResource: QuarkusTestResourceLifecycleManager {
         config["s3.bucket"] = "edufication"
         config["s3.prefix"] = "files"
 
-
         config["s3.access"] = credentials.credentials.awsAccessKeyId
         config["s3.secret"] = credentials.credentials.awsSecretKey
 
