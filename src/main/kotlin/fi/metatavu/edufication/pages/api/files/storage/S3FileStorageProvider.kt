@@ -62,7 +62,6 @@ class S3FileStorageProvider {
      * @param contentType content type of object to be uploaded
      * @param filename object filename
      * @param tempFile object data in temp file
-     *
      * @return uploaded object
      */
     fun uploadObject(key: String, contentType: String, filename: String, tempFile: File): URL {
