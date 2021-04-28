@@ -113,7 +113,6 @@ class PagesTestIT {
      * Downloads a file and asserts that the download succeeds
      *
      * @param uri path to download from
-     *
      * @return file input stream
      */
     fun download(uri: String): InputStream? {

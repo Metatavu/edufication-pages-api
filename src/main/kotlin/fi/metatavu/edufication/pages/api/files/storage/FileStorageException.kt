@@ -5,7 +5,7 @@ package fi.metatavu.edufication.pages.api.files.storage
  *
  * @author Antti Leppä
  */
-open class FileStorageException : Exception {
+open class FileStorageException: Exception {
 
     /**
      * Constructor

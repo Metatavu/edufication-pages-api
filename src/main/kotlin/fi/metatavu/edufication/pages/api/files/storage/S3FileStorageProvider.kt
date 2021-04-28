@@ -66,7 +66,6 @@ class S3FileStorageProvider {
      * @param contentType content type of object to be uploaded
      * @param filename object filename
      * @param tempFile object data in temp file
-     *
      * @return uploaded object
      */
     fun uploadObject(key: String, contentType: String, filename: String, tempFile: File): URL {
@@ -95,7 +94,6 @@ class S3FileStorageProvider {
      * Returns full path to object or null if object does not exist
      *
      * @param key object key
-     *
      * @return uploaded object
      */
     fun getObjectFullPath(key: String): URL? {

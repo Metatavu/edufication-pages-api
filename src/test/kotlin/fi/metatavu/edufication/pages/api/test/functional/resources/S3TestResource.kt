@@ -5,7 +5,6 @@ import io.quarkus.test.common.QuarkusTestResourceLifecycleManager
 import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.utility.DockerImageName
 
-
 /**
  * Class for Keycloak test resource.
  *
@@ -25,10 +24,8 @@ class S3TestResource: QuarkusTestResourceLifecycleManager {
         config["s3.bucket"] = "edufication"
         config["s3.prefix"] = "files"
 
-
         config["s3.access"] = credentials.credentials.awsAccessKeyId
         config["s3.secret"] = credentials.credentials.awsSecretKey
-
 
         config["s3.endpoint"] = endpointConf.serviceEndpoint
 
@@ -39,10 +36,7 @@ class S3TestResource: QuarkusTestResourceLifecycleManager {
             .withCredentials(credentials)
             .build()
 
-        val x = client.createBucket("edufication")
-
-        print(x.toString())
-
+        client.createBucket("edufication")
         return config
     }
 

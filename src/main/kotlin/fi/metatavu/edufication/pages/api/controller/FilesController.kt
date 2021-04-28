@@ -13,7 +13,6 @@ import java.net.URL
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
-
 /**
  * Controller class for files
  */
@@ -27,7 +26,6 @@ class FilesController {
      * Stores a page into s3
      *
      * @param page Page to store
-     *
      * @return object url
      */
     fun storeJsonPage(page: Page): URL {
@@ -48,7 +46,6 @@ class FilesController {
      * Returns a stored file Url
      *
      * @param path page path to find url for
-     *
      * @return Page url or null if not found
      */
     fun getPageUrl(path: String?): URL? {
