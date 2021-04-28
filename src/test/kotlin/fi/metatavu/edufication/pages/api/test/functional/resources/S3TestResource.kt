@@ -5,7 +5,6 @@ import io.quarkus.test.common.QuarkusTestResourceLifecycleManager
 import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.utility.DockerImageName
 
-
 /**
  * Class for Keycloak test resource.
  *
