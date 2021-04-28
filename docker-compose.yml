@@ -1,0 +1,29 @@
+version: "3"
+
+volumes:
+  keycloak_mysql_data:
+    driver: local
+  api_mysql_data:
+    driver: local
+
+networks:
+  default:
+    external:
+      name: testing_net
+
+services:
+  api-mysql:
+    image: mysql:5.7
+    container_name: "api-mysql"
+    volumes:
+      - api_mysql_data:/var/lib/mysql
+    command: --lower_case_table_names=1 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
