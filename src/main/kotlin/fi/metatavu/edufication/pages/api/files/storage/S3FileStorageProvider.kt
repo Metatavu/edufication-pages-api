@@ -30,15 +30,19 @@ class S3FileStorageProvider {
     @ConfigProperty(name = "s3.endpoint")
     private lateinit var endpoint: String
 
+    @Inject
     @ConfigProperty(name = "s3.region")
     private lateinit var region: String
 
+    @Inject
     @ConfigProperty(name = "s3.bucket")
     private lateinit var bucket: String
 
+    @Inject
     @ConfigProperty(name = "s3.secret")
     private lateinit var secret: String
 
+    @Inject
     @ConfigProperty(name = "s3.access")
     private lateinit var access: String
 
