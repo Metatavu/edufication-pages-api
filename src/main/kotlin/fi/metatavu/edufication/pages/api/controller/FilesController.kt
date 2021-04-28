@@ -48,7 +48,7 @@ class FilesController {
      * @param path page path to find url for
      * @return Page url or null if not found
      */
-    fun getPageUrl(path: String?): URL? {
+    fun getPageUrl(path: String): URL? {
         return s3StorageProvider.getObjectFullPath(path + "page.json")
     }
 
@@ -56,6 +56,7 @@ class FilesController {
      * Gets temporary page file
      *
      * @param page Page to get temporary file for
+     * @return Temporary file
      */
     private fun getTempPageFile(page: Page): File {
         val file = File.createTempFile("pending-upload", ".json")
