@@ -13,7 +13,6 @@ import java.net.URL
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
-
 /**
  * Controller class for files
  */
