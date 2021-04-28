@@ -37,7 +37,9 @@ class PagesTestIT {
     fun createPage() {
         TestBuilder().use {
             val createdPage = it.manager().pages.createPage()
-            assertNotNull(createdPage)
+            assertNotNull(createdPage.status)
+            assertNotNull(createdPage.contentBlocks)
+            assertNotNull(createdPage.path)
         }
     }
 
