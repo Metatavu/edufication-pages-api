@@ -46,7 +46,6 @@ class FilesController {
      * Returns a stored file Url
      *
      * @param path page path to find url for
-     *
      * @return Page url or null if not found
      */
     fun getPageUrl(path: String?): URL? {
