@@ -26,7 +26,6 @@ class FilesController {
      * Stores a page into s3
      *
      * @param page Page to store
-     *
      * @return object url
      */
     fun storeJsonPage(page: Page): URL {
