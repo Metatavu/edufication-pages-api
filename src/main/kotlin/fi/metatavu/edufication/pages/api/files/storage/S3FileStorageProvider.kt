@@ -91,7 +91,6 @@ class S3FileStorageProvider {
      * Returns full path to object or null if object does not exist
      *
      * @param key object key
-     *
      * @return uploaded object
      */
     fun getObjectFullPath(key: String): URL? {
