@@ -35,9 +35,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         )
 
         filesController.storeJsonPage(page)
-        val translated = pageTranslator.translate(createdPage)
-
-        return createOk(translated)
+        return createOk(pageTranslator.translate(createdPage))
     }
 
     @Transactional
