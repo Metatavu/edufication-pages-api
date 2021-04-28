@@ -28,7 +28,6 @@ class S3TestResource: QuarkusTestResourceLifecycleManager {
         config["s3.access"] = credentials.credentials.awsAccessKeyId
         config["s3.secret"] = credentials.credentials.awsSecretKey
 
-
         config["s3.endpoint"] = endpointConf.serviceEndpoint
 
         val client = AmazonS3ClientBuilder
