@@ -45,9 +45,11 @@ class FilesController {
     }
 
     /**
-     * Removes a stored json page from s3
+     * Returns a stored file Url
      *
-     * @param path page path to remove
+     * @param path page path to find url for
+     *
+     * @return Page url or null if not found
      */
     fun getPageUrl(path: String?): URL? {
         return s3StorageProvider.getObjectFullPath(path + "page.json")
