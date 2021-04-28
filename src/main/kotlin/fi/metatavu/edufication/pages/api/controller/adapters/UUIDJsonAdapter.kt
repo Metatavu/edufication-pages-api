@@ -8,6 +8,7 @@ import java.util.*
  * Adapter class for UUID
  */
 class UUIDJsonAdapter {
+
     @ToJson
     fun toJson(value: UUID?) = value?.toString()
 
