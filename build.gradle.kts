@@ -38,6 +38,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.11.0")
     implementation("com.squareup.moshi:moshi-adapters:1.11.0")
     testImplementation("com.squareup.okhttp3:okhttp")
+    testImplementation("org.testcontainers:localstack:1.15.3")
     testImplementation("fi.metatavu.jaxrs.testbuilder:jaxrs-functional-test-builder:$jaxrsFunctionalTestBuilderVersion")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:mysql:$testContainersVersion")

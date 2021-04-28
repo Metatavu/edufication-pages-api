@@ -37,6 +37,17 @@ class PagesTestBuilderResource(
     }
 
     /**
+     * Deletes a page from the API
+     *
+     * @param pageId page id
+     */
+    fun deletePage(pageId: UUID?) {
+        if (pageId != null) {
+            api.deletePage(pageId = pageId)
+        }
+    }
+
+    /**
      * Creates a page
      *
      * @return Created page

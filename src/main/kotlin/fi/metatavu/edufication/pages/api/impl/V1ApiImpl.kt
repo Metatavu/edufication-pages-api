@@ -1,17 +1,14 @@
 package fi.metatavu.edufication.pages.api.impl
 
+import fi.metatavu.edufication.pages.api.controller.FilesController
 import fi.metatavu.edufication.pages.api.controller.PagesController
-import fi.metatavu.edufication.pages.api.impl.translate.ContentBlockTranslator
 import fi.metatavu.edufication.pages.api.impl.translate.PageTranslator
 import fi.metatavu.edufication.pages.api.model.Page
 import fi.metatavu.edufication.pages.api.spec.V1Api
-import org.hibernate.annotations.NotFound
-import org.jboss.resteasy.util.NoContent
 import java.util.*
 import javax.enterprise.context.RequestScoped
 import javax.inject.Inject
 import javax.transaction.Transactional
-import javax.ws.rs.BadRequestException
 import javax.ws.rs.core.Response
 
 @RequestScoped
@@ -19,6 +16,9 @@ class V1ApiImpl: V1Api, AbstractApi()  {
 
     @Inject
     private lateinit var pagesController: PagesController
+
+    @Inject
+    private lateinit var filesController: FilesController
 
     @Inject
     private lateinit var pageTranslator: PageTranslator
@@ -34,7 +34,10 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             contentBlocks = page.contentBlocks
         )
 
-        return createOk(pageTranslator.translate(createdPage))
+        filesController.storeJsonPage(page)
+        val translated = pageTranslator.translate(createdPage)
+
+        return createOk(translated)
     }
 
     @Transactional
@@ -42,6 +45,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val page = pagesController.findPage(pageId) ?: return createNotFound()
 
         pagesController.deletePage(page)
+        filesController.removeJsonPage(page.path.toString())
         return createNoContent()
     }
 
@@ -73,6 +77,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             createInternalServerError(PAGE_UPDATE_FAILED)
         } else {
             val translated = pageTranslator.translate(updatedPage)
+            filesController.storeJsonPage(page)
             createOk(translated)
         }
     }
