@@ -18,7 +18,6 @@ class PageDAO: AbstractDAO<Page>() {
      * @param id id
      * @param status status
      * @param path path
-     * @param uri uri
      * @param creatorId creatorId
      * @return created VisitorSessionVariable
      */
@@ -26,6 +25,7 @@ class PageDAO: AbstractDAO<Page>() {
         val result = Page()
         result.id = id
         result.path = path
+        result.status = status
         result.creatorId = creatorId
         result.lastModifierId = creatorId
         return persist(result)
