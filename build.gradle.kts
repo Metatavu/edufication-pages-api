@@ -19,9 +19,11 @@ val quarkusPlatformVersion: String by project
 val jaxrsFunctionalTestBuilderVersion: String by project
 val testContainersVersion: String by project
 val testContainersKeycloakVersion: String by project
+val awsSdkVersion: String by project
 
 dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
+    implementation(platform("com.amazonaws:aws-java-sdk-bom:$awsSdkVersion"))
     implementation("io.quarkus:quarkus-hibernate-orm")
     implementation("io.quarkus:quarkus-container-image-docker")
     implementation("io.quarkus:quarkus-hibernate-validator")
@@ -32,9 +34,11 @@ dependencies {
     implementation("io.quarkus:quarkus-jdbc-mysql")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
-    testImplementation("com.squareup.moshi:moshi-kotlin:1.11.0")
-    testImplementation("com.squareup.moshi:moshi-adapters:1.11.0")
+    implementation("com.amazonaws:aws-java-sdk-s3")
+    implementation("com.squareup.moshi:moshi-kotlin:1.11.0")
+    implementation("com.squareup.moshi:moshi-adapters:1.11.0")
     testImplementation("com.squareup.okhttp3:okhttp")
+    testImplementation("org.testcontainers:localstack:1.15.3")
     testImplementation("fi.metatavu.jaxrs.testbuilder:jaxrs-functional-test-builder:$jaxrsFunctionalTestBuilderVersion")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:mysql:$testContainersVersion")

@@ -1,5 +1,6 @@
 package fi.metatavu.edufication.pages.api.impl.translate
 
+import fi.metatavu.edufication.pages.api.controller.FilesController
 import fi.metatavu.edufication.pages.api.controller.PagesController
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import javax.enterprise.context.ApplicationScoped
@@ -12,6 +13,9 @@ class PageTranslator: AbstractTranslator<Page, fi.metatavu.edufication.pages.api
     private lateinit var pagesController: PagesController
 
     @Inject
+    private lateinit var filesController: FilesController
+
+    @Inject
     private lateinit var contentBlockTranslator: ContentBlockTranslator
 
     override fun translate(entity: Page): fi.metatavu.edufication.pages.api.model.Page {
@@ -21,7 +25,7 @@ class PageTranslator: AbstractTranslator<Page, fi.metatavu.edufication.pages.api
         translated.createdAt = entity.createdAt
         translated.creatorId = entity.creatorId
         translated.path = entity.path
-        translated.uri = ""
+        translated.uri = entity.path?.let { filesController.getPageUrl(it)?.toExternalForm() }
         translated.status = entity.status
         translated.lastModifierId = entity.lastModifierId
         translated.modifiedAt = entity.modifiedAt
