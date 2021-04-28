@@ -38,10 +38,7 @@ class S3TestResource: QuarkusTestResourceLifecycleManager {
             .withCredentials(credentials)
             .build()
 
-        val x = client.createBucket("edufication")
-
-        print(x.toString())
-
+        client.createBucket("edufication")
         return config
     }
 
