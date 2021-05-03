@@ -17,6 +17,7 @@ class PageDAO: AbstractDAO<Page>() {
      * @param status status
      * @param path path
      * @param creatorId creatorId
+     * @param private page private
      * @return created VisitorSessionVariable
      */
     fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID, private: Boolean): Page {

@@ -28,6 +28,7 @@ class PagesController {
      * @param path Path to page
      * @param creatorId Creator Id
      * @param contentBlocks Content Blocks for page
+     * @param private page private
      *
      * @return created counter frame
      */
@@ -83,6 +84,7 @@ class PagesController {
      * @param path page path
      * @param modifierId modifierId
      * @param contentBlocks contentBlocks
+     * @param private page private
      *
      * @return Updated Page
      */

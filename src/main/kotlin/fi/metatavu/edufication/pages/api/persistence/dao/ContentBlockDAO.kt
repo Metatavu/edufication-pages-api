@@ -21,6 +21,7 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
      * @param textContent textContent
      * @param media textContent
      * @param link textContent
+     * @param orderInPage orderInPage
      * @return created ContentBlock
      */
     fun create(id: UUID, page: Page, layout: ContentBlockLayout, title: String?, textContent: String?, media: String?, link: String?, orderInPage: Int): ContentBlock {
