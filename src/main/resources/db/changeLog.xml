@@ -66,5 +66,9 @@
             </column>
         </addColumn>
     </changeSet>
-
+    <changeSet id="layoutenumschange" author="antti.leinonen">
+        <update tableName="contentblock">
+            <column name="layout" value="MEDIA_RIGHT"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>
