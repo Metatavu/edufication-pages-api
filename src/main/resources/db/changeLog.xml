@@ -54,5 +54,17 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="layoutschange" author="antti.leinonen">
+        <addColumn tableName="page">
+            <column name="private" type="bit(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="contentblock">
+            <column name="orderinpage" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

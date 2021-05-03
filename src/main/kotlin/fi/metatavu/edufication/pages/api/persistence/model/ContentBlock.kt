@@ -1,9 +1,11 @@
 package fi.metatavu.edufication.pages.api.persistence.model
 
 import fi.metatavu.edufication.pages.api.model.ContentBlockLayout
-import java.time.OffsetDateTime
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.ManyToOne
 
 @Entity
 class ContentBlock {
@@ -28,5 +30,8 @@ class ContentBlock {
 
     @Column(nullable = true)
     var link: String? = null
+
+    @Column(nullable = false)
+    var orderInPage: Int? = null
 
 }

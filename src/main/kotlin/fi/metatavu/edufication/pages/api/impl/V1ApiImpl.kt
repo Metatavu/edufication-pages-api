@@ -31,7 +31,8 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             status = page.status,
             path = page.path,
             creatorId = userId,
-            contentBlocks = page.contentBlocks
+            contentBlocks = page.contentBlocks,
+            private = page.private
         )
 
         filesController.storeJsonPage(page)
@@ -68,7 +69,8 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             status = page.status,
             path = page.path,
             modifierId = userId,
-            contentBlocks = page.contentBlocks
+            contentBlocks = page.contentBlocks,
+            private = page.private
         )
 
         return if (updatedPage == null) {

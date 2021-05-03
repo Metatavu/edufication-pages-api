@@ -1,8 +1,6 @@
 package fi.metatavu.edufication.pages.api.persistence.dao
 
 import fi.metatavu.edufication.pages.api.model.PageStatus
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock_
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import fi.metatavu.edufication.pages.api.persistence.model.Page_
 import java.util.*
@@ -19,13 +17,15 @@ class PageDAO: AbstractDAO<Page>() {
      * @param status status
      * @param path path
      * @param creatorId creatorId
+     * @param private page private
      * @return created VisitorSessionVariable
      */
-    fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID): Page {
+    fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID, private: Boolean): Page {
         val result = Page()
         result.id = id
         result.path = path
         result.status = status
+        result.private = private
         result.creatorId = creatorId
         result.lastModifierId = creatorId
         return persist(result)
@@ -35,7 +35,6 @@ class PageDAO: AbstractDAO<Page>() {
      * Lists all pages that match the given path
      *
      * @param path Path
-     *
      * @return list of pages
      */
     fun listByPath(path: String): List<Page> {
@@ -59,7 +58,8 @@ class PageDAO: AbstractDAO<Page>() {
      * Updates Page
      *
      * @param page Page to update
-     *
+     * @param page new path
+     * @param modifierId modifiers id
      * @return updated page
      */
     fun updatePath(page: Page, path: String?, modifierId: UUID): Page {
@@ -72,7 +72,22 @@ class PageDAO: AbstractDAO<Page>() {
      * Updates Page
      *
      * @param page Page to update
+     * @param private new private status
+     * @param modifierId modifiers id
+     * @return updated page
+     */
+    fun updatePrivate(page: Page, private: Boolean, modifierId: UUID): Page {
+        page.private = private
+        page.lastModifierId = modifierId
+        return persist(page)
+    }
+
+    /**
+     * Updates Page
      *
+     * @param page Page to update
+     * @param status new status
+     * @param modifierId modifiers id
      * @return updated page
      */
     fun updateStatus(page: Page, status: PageStatus?, modifierId: UUID): Page {

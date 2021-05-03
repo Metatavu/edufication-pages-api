@@ -1,7 +1,7 @@
 package fi.metatavu.edufication.pages.api.persistence.dao
 
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.model.ContentBlockLayout
+import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock_
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import java.util.*
@@ -21,9 +21,10 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
      * @param textContent textContent
      * @param media textContent
      * @param link textContent
+     * @param orderInPage orderInPage
      * @return created ContentBlock
      */
-    fun create(id: UUID, page: Page, layout: ContentBlockLayout, title: String?, textContent: String?, media: String?, link: String?): ContentBlock {
+    fun create(id: UUID, page: Page, layout: ContentBlockLayout, title: String?, textContent: String?, media: String?, link: String?, orderInPage: Int): ContentBlock {
         val result = ContentBlock()
         result.id = id
         result.page = page
@@ -32,6 +33,7 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
         result.textContent = textContent
         result.media = media
         result.link = link
+        result.orderInPage = orderInPage
         return persist(result)
     }
 

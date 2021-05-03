@@ -56,21 +56,24 @@ class PagesTestBuilderResource(
         val pageContent1 = ContentBlock (
             textContent = "Lorem ipsum dolor sit amet",
             link = "www.kissa.fi",
-            layout = ContentBlockLayout.oNTOP,
-            title = "Tämä on sivuston sisältöä"
+            layout = ContentBlockLayout.mEDIALEFT,
+            title = "Tämä on sivuston sisältöä",
+            orderInPage = 0
         )
 
         val pageContent2 = ContentBlock (
             textContent = "Lorem ipsum dolor sit amet as simo ber",
             link = "www.kissa.com",
-            layout = ContentBlockLayout.oNBOTTOM,
-            title = "Tämä on lisää sivuston sisältöä"
+            layout = ContentBlockLayout.mEDIALEFTARTICLE,
+            title = "Tämä on lisää sivuston sisältöä",
+            orderInPage = 1
         )
 
         val page = Page(
             path = "/",
             contentBlocks = arrayOf(pageContent1, pageContent2),
             status = PageStatus.dRAFT,
+            private = true
         )
 
         return api.createPage(page = page)

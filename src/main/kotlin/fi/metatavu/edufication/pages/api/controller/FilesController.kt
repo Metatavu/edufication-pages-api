@@ -30,7 +30,7 @@ class FilesController {
      */
     fun storeJsonPage(page: Page): URL {
         val file = getTempPageFile(page)
-        return s3StorageProvider.uploadObject(page.path + "page.json", "application/json", "", file)
+        return s3StorageProvider.uploadObject(page.path + ".json", "application/json", "", file)
     }
 
     /**
@@ -39,7 +39,7 @@ class FilesController {
      * @param path page path to remove
      */
     fun removeJsonPage(path: String) {
-        return s3StorageProvider.delete(path + "page.json")
+        return s3StorageProvider.delete("$path.json")
     }
 
     /**
@@ -49,7 +49,7 @@ class FilesController {
      * @return Page url or null if not found
      */
     fun getPageUrl(path: String): URL? {
-        return s3StorageProvider.getObjectFullPath(path + "page.json")
+        return s3StorageProvider.getObjectFullPath("$path.json")
     }
 
     /**

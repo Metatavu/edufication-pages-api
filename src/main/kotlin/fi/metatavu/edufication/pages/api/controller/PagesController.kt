@@ -1,9 +1,9 @@
 package fi.metatavu.edufication.pages.api.controller
 
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.model.PageStatus
 import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.PageDAO
+import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import java.util.*
 import javax.enterprise.context.ApplicationScoped
@@ -28,11 +28,12 @@ class PagesController {
      * @param path Path to page
      * @param creatorId Creator Id
      * @param contentBlocks Content Blocks for page
+     * @param private page private
      *
      * @return created counter frame
      */
-    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>): Page {
-        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId)
+    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean): Page {
+        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId, private = private)
 
         contentBlocks.map {
             contentBlockDAO.create(
@@ -42,7 +43,8 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link
+                link = it.link,
+                orderInPage = it.orderInPage
             )
         }
 
@@ -82,13 +84,15 @@ class PagesController {
      * @param path page path
      * @param modifierId modifierId
      * @param contentBlocks contentBlocks
+     * @param private page private
      *
      * @return Updated Page
      */
-    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>): Page? {
+    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean): Page? {
         val pageToUpdate = pageDAO.findById(pageId) ?: return null
 
         pageDAO.updatePath(pageToUpdate, path, modifierId)
+        pageDAO.updatePrivate(pageToUpdate, private, modifierId)
         val result = pageDAO.updateStatus(pageToUpdate, status, modifierId)
 
         contentBlockDAO.listByPage(pageToUpdate).forEach {
@@ -103,7 +107,8 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link
+                link = it.link,
+                orderInPage = it.orderInPage
             )
         }
 

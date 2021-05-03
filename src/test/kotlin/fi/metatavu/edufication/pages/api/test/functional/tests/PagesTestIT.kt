@@ -72,21 +72,24 @@ class PagesTestIT {
 
             val updatedContent = ContentBlock(
                 title = "Title 123123",
-                textContent = "Text text text 123 123 123",
+                textContent = "Text text text 123 123 123 ÄÄÄ ÖÖÖ",
                 media = "media.fi",
                 link = "google.fi",
-                layout = ContentBlockLayout.sMALL
+                layout = ContentBlockLayout.mEDIALEFT,
+                orderInPage = 0
             )
             val updatedPage = Page(
                 status = PageStatus.pUBLIC,
                 uri = "",
                 path = "/kurssit",
-                contentBlocks = arrayOf(updatedContent)
+                contentBlocks = arrayOf(updatedContent),
+                private = false
             )
 
             val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)
             assertEquals(updatedPage.status, update.status)
             assertEquals(updatedPage.path, update.path)
+            assertEquals(updatedPage.private, update.private)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.title, update.contentBlocks.getOrNull(0)?.title)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.layout, update.contentBlocks.getOrNull(0)?.layout)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.link, update.contentBlocks.getOrNull(0)?.link)
