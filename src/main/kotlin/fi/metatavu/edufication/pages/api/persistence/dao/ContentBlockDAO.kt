@@ -1,7 +1,7 @@
 package fi.metatavu.edufication.pages.api.persistence.dao
 
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.model.ContentBlockLayout
+import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock_
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import java.util.*

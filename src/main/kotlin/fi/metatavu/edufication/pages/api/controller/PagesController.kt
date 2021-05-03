@@ -1,9 +1,9 @@
 package fi.metatavu.edufication.pages.api.controller
 
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.model.PageStatus
 import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.PageDAO
+import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import java.util.*
 import javax.enterprise.context.ApplicationScoped
@@ -31,8 +31,8 @@ class PagesController {
      *
      * @return created counter frame
      */
-    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>): Page {
-        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId)
+    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean): Page {
+        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId, private = private)
 
         contentBlocks.map {
             contentBlockDAO.create(

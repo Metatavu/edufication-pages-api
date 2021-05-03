@@ -75,13 +75,14 @@ class PagesTestIT {
                 textContent = "Text text text 123 123 123",
                 media = "media.fi",
                 link = "google.fi",
-                layout = ContentBlockLayout.sMALL
+                layout = ContentBlockLayout.mEDIALEFT
             )
             val updatedPage = Page(
                 status = PageStatus.pUBLIC,
                 uri = "",
                 path = "/kurssit",
-                contentBlocks = arrayOf(updatedContent)
+                contentBlocks = arrayOf(updatedContent),
+                private = false
             )
 
             val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)

@@ -1,8 +1,6 @@
 package fi.metatavu.edufication.pages.api.persistence.dao
 
 import fi.metatavu.edufication.pages.api.model.PageStatus
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
-import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock_
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import fi.metatavu.edufication.pages.api.persistence.model.Page_
 import java.util.*
@@ -21,11 +19,12 @@ class PageDAO: AbstractDAO<Page>() {
      * @param creatorId creatorId
      * @return created VisitorSessionVariable
      */
-    fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID): Page {
+    fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID, private: Boolean): Page {
         val result = Page()
         result.id = id
         result.path = path
         result.status = status
+        result.private = private
         result.creatorId = creatorId
         result.lastModifierId = creatorId
         return persist(result)
@@ -64,6 +63,19 @@ class PageDAO: AbstractDAO<Page>() {
      */
     fun updatePath(page: Page, path: String?, modifierId: UUID): Page {
         page.path = path
+        page.lastModifierId = modifierId
+        return persist(page)
+    }
+
+    /**
+     * Updates Page
+     *
+     * @param page Page to update
+     *
+     * @return updated page
+     */
+    fun updatePrivate(page: Page, private: Boolean, modifierId: UUID): Page {
+        page.private = private
         page.lastModifierId = modifierId
         return persist(page)
     }
