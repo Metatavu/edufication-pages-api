@@ -1,7 +1,6 @@
 package fi.metatavu.edufication.pages.api.impl.translate
 
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
-import fi.metatavu.edufication.pages.api.persistence.model.Page
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
@@ -13,6 +12,7 @@ class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufi
         translated.media = entity.media
         translated.textContent = entity.textContent
         translated.title = entity.title
+        translated.orderInPage = entity.orderInPage
 
         return translated
     }

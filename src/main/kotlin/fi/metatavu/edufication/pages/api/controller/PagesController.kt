@@ -42,7 +42,8 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link
+                link = it.link,
+                orderInPage = it.orderInPage
             )
         }
 
@@ -85,10 +86,11 @@ class PagesController {
      *
      * @return Updated Page
      */
-    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>): Page? {
+    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean): Page? {
         val pageToUpdate = pageDAO.findById(pageId) ?: return null
 
         pageDAO.updatePath(pageToUpdate, path, modifierId)
+        pageDAO.updatePrivate(pageToUpdate, private, modifierId)
         val result = pageDAO.updateStatus(pageToUpdate, status, modifierId)
 
         contentBlockDAO.listByPage(pageToUpdate).forEach {
@@ -103,7 +105,8 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link
+                link = it.link,
+                orderInPage = it.orderInPage
             )
         }
 

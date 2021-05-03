@@ -31,4 +31,7 @@ class ContentBlock {
     @Column(nullable = true)
     var link: String? = null
 
+    @Column(nullable = false)
+    var orderInPage: Int? = null
+
 }

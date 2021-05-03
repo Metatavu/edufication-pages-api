@@ -23,7 +23,7 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
      * @param link textContent
      * @return created ContentBlock
      */
-    fun create(id: UUID, page: Page, layout: ContentBlockLayout, title: String?, textContent: String?, media: String?, link: String?): ContentBlock {
+    fun create(id: UUID, page: Page, layout: ContentBlockLayout, title: String?, textContent: String?, media: String?, link: String?, orderInPage: Int): ContentBlock {
         val result = ContentBlock()
         result.id = id
         result.page = page
@@ -32,6 +32,7 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
         result.textContent = textContent
         result.media = media
         result.link = link
+        result.orderInPage = orderInPage
         return persist(result)
     }
 

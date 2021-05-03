@@ -34,7 +34,6 @@ class PageDAO: AbstractDAO<Page>() {
      * Lists all pages that match the given path
      *
      * @param path Path
-     *
      * @return list of pages
      */
     fun listByPath(path: String): List<Page> {
@@ -58,7 +57,8 @@ class PageDAO: AbstractDAO<Page>() {
      * Updates Page
      *
      * @param page Page to update
-     *
+     * @param page new path
+     * @param modifierId modifiers id
      * @return updated page
      */
     fun updatePath(page: Page, path: String?, modifierId: UUID): Page {
@@ -71,7 +71,8 @@ class PageDAO: AbstractDAO<Page>() {
      * Updates Page
      *
      * @param page Page to update
-     *
+     * @param private new private status
+     * @param modifierId modifiers id
      * @return updated page
      */
     fun updatePrivate(page: Page, private: Boolean, modifierId: UUID): Page {
@@ -84,7 +85,8 @@ class PageDAO: AbstractDAO<Page>() {
      * Updates Page
      *
      * @param page Page to update
-     *
+     * @param status new status
+     * @param modifierId modifiers id
      * @return updated page
      */
     fun updateStatus(page: Page, status: PageStatus?, modifierId: UUID): Page {
