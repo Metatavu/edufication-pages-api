@@ -30,7 +30,7 @@ class FilesController {
      */
     fun storeJsonPage(page: Page): URL {
         val file = getTempPageFile(page)
-        return s3StorageProvider.uploadObject(page.path + ".json", "application/json; charset=utf-8", "", file)
+        return s3StorageProvider.uploadObject(page.path + ".json", "application/json", "", file)
     }
 
     /**
