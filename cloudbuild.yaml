@@ -13,7 +13,7 @@ steps:
     entrypoint: 'bash'
     args: 
     - '-c'
-    - ./gradlew --debug clean build -x test
+    - ./gradlew clean build -x test
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     timeout: 7200s
