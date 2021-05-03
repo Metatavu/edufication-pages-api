@@ -25,7 +25,7 @@ class PageTranslator: AbstractTranslator<Page, fi.metatavu.edufication.pages.api
         translated.createdAt = entity.createdAt
         translated.creatorId = entity.creatorId
         translated.path = entity.path
-        translated.uri = entity.path?.let { filesController.getPageUrl(it)?.toExternalForm() }
+        translated.uri = entity.path?.let { filesController.getPageUrl(it)?.toExternalForm() } ?: ""
         translated.status = entity.status
         translated.private = entity.private
         translated.lastModifierId = entity.lastModifierId
