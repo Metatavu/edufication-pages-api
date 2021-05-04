@@ -71,4 +71,9 @@
             <column name="layout" value="MEDIA_RIGHT"/>
         </update>
     </changeSet>
+    <changeSet id="statuschange" author="antti.leinonen">
+        <update tableName="page">
+            <column name="status" value="PUBLIC"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>
