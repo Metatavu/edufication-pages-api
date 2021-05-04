@@ -76,4 +76,9 @@
             <column name="status" value="PUBLIC"/>
         </update>
     </changeSet>
+    <changeSet id="statuschangenumber" author="antti.leinonen">
+        <update tableName="page">
+            <column name="status" value="0"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>
