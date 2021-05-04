@@ -81,4 +81,9 @@
             <column name="status" value="0"/>
         </update>
     </changeSet>
+    <changeSet id="layoutenumschangenumber" author="antti.leinonen">
+        <update tableName="contentblock">
+            <column name="layout" value="0"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>
