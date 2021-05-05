@@ -2,10 +2,8 @@ package fi.metatavu.edufication.pages.api.persistence.model
 
 import fi.metatavu.edufication.pages.api.model.ContentBlockLayout
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.ManyToOne
+import javax.persistence.*
+
 
 @Entity
 class ContentBlock {
@@ -33,5 +31,9 @@ class ContentBlock {
 
     @Column(nullable = false)
     var orderInPage: Int? = null
+
+    @OneToOne(cascade = [CascadeType.REMOVE])
+    @JoinColumn(name = "quiz_id", referencedColumnName = "id")
+    var quiz: Quiz? = null
 
 }

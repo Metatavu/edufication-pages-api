@@ -45,6 +45,10 @@ class PagesTestIT {
             val createdPage = it.manager().pages.createPage()
             assertNotNull(createdPage)
             assertNotNull(createdPage.uri)
+            val quiz = createdPage.contentBlocks.find { block -> block.orderInPage == 0 }?.quiz
+            assertEquals(2, quiz?.options?.count())
+            assertEquals(quiz?.text, "Onko hauki kala?")
+            assertEquals(quiz?.correctIndex, 1)
         }
     }
 
