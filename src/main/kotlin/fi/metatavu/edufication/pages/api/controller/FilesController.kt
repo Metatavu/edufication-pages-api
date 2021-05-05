@@ -30,7 +30,7 @@ class FilesController {
      */
     fun storeJsonPage(page: Page): URL {
         val file = getTempPageFile(page)
-        return s3StorageProvider.uploadObject(page.path + ".json", "application/json", "", file)
+        return s3StorageProvider.uploadObject(page.path + ".json", "application/json; charset=utf-8", "", file)
     }
 
     /**
@@ -61,7 +61,7 @@ class FilesController {
     private fun getTempPageFile(page: Page): File {
         val file = File.createTempFile("pending-upload", ".json")
         file.deleteOnExit()
-        val writer = OutputStreamWriter(FileOutputStream(file))
+        val writer = OutputStreamWriter(FileOutputStream(file), "UTF-8")
         val moshi = Moshi.Builder().add(UUIDJsonAdapter()).add(OffsetDateTimeAdapter()).build()
         val jsonAdapter: JsonAdapter<Page> = moshi.adapter(Page::class.java)
 
