@@ -126,7 +126,7 @@ class PagesController {
                 link = it.link,
                 orderInPage = it.orderInPage
             )
-            if(it.quiz != null) {
+            if (it.quiz != null) {
                 val quiz = quizDAO.create(
                     UUID.randomUUID(),
                     contentBlock = contentBlock,
