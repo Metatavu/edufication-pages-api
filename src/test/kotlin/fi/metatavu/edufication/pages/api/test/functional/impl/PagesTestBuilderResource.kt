@@ -2,10 +2,7 @@ package fi.metatavu.edufication.pages.api.test.functional.impl
 
 import fi.metatavu.edufication.pages.api.client.apis.PagesApi
 import fi.metatavu.edufication.pages.api.client.infrastructure.ApiClient
-import fi.metatavu.edufication.pages.api.client.models.ContentBlock
-import fi.metatavu.edufication.pages.api.client.models.ContentBlockLayout
-import fi.metatavu.edufication.pages.api.client.models.Page
-import fi.metatavu.edufication.pages.api.client.models.PageStatus
+import fi.metatavu.edufication.pages.api.client.models.*
 import fi.metatavu.edufication.pages.api.test.functional.TestBuilder
 import fi.metatavu.jaxrs.test.functional.builder.auth.AccessTokenProvider
 import java.util.*
@@ -53,12 +50,19 @@ class PagesTestBuilderResource(
      * @return Created page
      */
     fun createPage(): Page {
+        val quiz1 = Quiz(
+            text = "Onko hauki kala?",
+            options = arrayOf("Ei", "Kyllä"),
+            correctIndex = 1
+        )
+
         val pageContent1 = ContentBlock (
             textContent = "Lorem ipsum dolor sit amet",
             link = "www.kissa.fi",
             layout = ContentBlockLayout.mEDIALEFT,
             title = "Tämä on sivuston sisältöä",
-            orderInPage = 0
+            orderInPage = 0,
+            quiz = quiz1
         )
 
         val pageContent2 = ContentBlock (

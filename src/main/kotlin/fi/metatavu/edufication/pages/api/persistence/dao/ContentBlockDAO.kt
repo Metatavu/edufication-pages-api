@@ -4,6 +4,7 @@ import fi.metatavu.edufication.pages.api.model.ContentBlockLayout
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock_
 import fi.metatavu.edufication.pages.api.persistence.model.Page
+import fi.metatavu.edufication.pages.api.persistence.model.Quiz
 import java.util.*
 import javax.enterprise.context.ApplicationScoped
 import javax.persistence.criteria.Predicate
@@ -35,6 +36,18 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
         result.link = link
         result.orderInPage = orderInPage
         return persist(result)
+    }
+
+    /**
+     * Updates Quiz for a content block
+     *
+     * @param contentBlock content block
+     * @param quiz quiz
+     * @return Content block
+     */
+    fun updateQuiz(contentBlock: ContentBlock, quiz: Quiz): ContentBlock {
+        contentBlock.quiz = quiz
+        return persist(contentBlock)
     }
 
     /**

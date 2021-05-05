@@ -86,4 +86,21 @@
             <column name="layout" value="0"/>
         </update>
     </changeSet>
+    <changeSet id="quizsupport" author="antti.leinonen">
+        <createTable tableName="quiz">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="text" type="VARCHAR(255)"/>
+            <column name="options" type="longtext"/>
+            <column name="correctIndex" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="quizsupportcontentblock" author="antti.leinonen">
+        <addColumn tableName="contentblock">
+            <column name="quiz_id" type="binary(16)">
+                <constraints nullable="true" foreignKeyName="FK_CONTENTBLOCK_ON_QUIZ" referencedColumnNames="id" referencedTableName="quiz"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

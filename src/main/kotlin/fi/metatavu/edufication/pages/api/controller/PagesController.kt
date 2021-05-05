@@ -1,8 +1,11 @@
 package fi.metatavu.edufication.pages.api.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import fi.metatavu.edufication.pages.api.model.PageStatus
 import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.PageDAO
+import fi.metatavu.edufication.pages.api.persistence.dao.QuizDAO
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import java.util.*
@@ -21,6 +24,9 @@ class PagesController {
     @Inject
     private lateinit var contentBlockDAO: ContentBlockDAO
 
+    @Inject
+    private lateinit var quizDAO: QuizDAO
+
     /**
      * Creates a new Page
      *
@@ -36,7 +42,7 @@ class PagesController {
         val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId, private = private)
 
         contentBlocks.map {
-            contentBlockDAO.create(
+            val contentBlock = contentBlockDAO.create(
                 id = UUID.randomUUID(),
                 page = createdPage,
                 layout = it.layout!!,
@@ -46,6 +52,16 @@ class PagesController {
                 link = it.link,
                 orderInPage = it.orderInPage
             )
+            if (it.quiz != null) {
+                val quiz = quizDAO.create(
+                    UUID.randomUUID(),
+                    contentBlock = contentBlock,
+                    text = it.quiz.text,
+                    options = getDataAsString(it.quiz.options.toTypedArray()),
+                    correctIndex = it.quiz.correctIndex
+                )
+                contentBlockDAO.updateQuiz(contentBlock, quiz)
+            }
         }
 
         return createdPage
@@ -100,7 +116,7 @@ class PagesController {
         }
 
         contentBlocks.map {
-            contentBlockDAO.create(
+            val contentBlock = contentBlockDAO.create(
                 id = UUID.randomUUID(),
                 page = pageToUpdate,
                 layout = it.layout!!,
@@ -110,9 +126,32 @@ class PagesController {
                 link = it.link,
                 orderInPage = it.orderInPage
             )
+            if (it.quiz != null) {
+                val quiz = quizDAO.create(
+                    UUID.randomUUID(),
+                    contentBlock = contentBlock,
+                    text = it.quiz.text,
+                    options = getDataAsString(it.quiz.options.toTypedArray()),
+                    correctIndex = it.quiz.correctIndex
+                )
+                contentBlockDAO.updateQuiz(contentBlock, quiz)
+            }
         }
 
         return result
+    }
+
+    /**
+     * Parses event triggers string as list of event triggers objects
+     *
+     * @param options event triggers string
+     * @return list of event triggers objects
+     */
+    fun parseOptions(options: String?): List<String?>? {
+        options ?: return listOf()
+        val objectMapper = ObjectMapper()
+
+        return objectMapper.readValue(options, object : TypeReference<List<String?>?>() {})
     }
 
     /**
@@ -156,5 +195,16 @@ class PagesController {
      */
     private fun listAll(): List<Page> {
         return pageDAO.listAll()
+    }
+
+    /**
+     * Serializes the object into JSON string
+     *
+     * @param data object
+     * @return JSON string
+     */
+    private fun <T> getDataAsString(data: T): String {
+        val objectMapper = ObjectMapper()
+        return objectMapper.writeValueAsString(data)
     }
 }
