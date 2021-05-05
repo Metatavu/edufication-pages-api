@@ -36,10 +36,11 @@ class FilesController {
     /**
      * Removes a stored json page from s3
      *
-     * @param page page to remove from storage
+     * @param path path of page to remove
+     * @param language language of page to remove
      */
-    fun removeJsonPage(page: fi.metatavu.edufication.pages.api.persistence.model.Page) {
-        return s3StorageProvider.delete("${page.language}/${page.path}.json")
+    fun removeJsonPage(path: String, language: String) {
+        return s3StorageProvider.delete("${language}/${path}.json")
     }
 
     /**

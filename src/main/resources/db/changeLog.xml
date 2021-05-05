@@ -120,4 +120,9 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="languages_mirate_set_fi" author="antti.leinonen">
+        <update tableName="page">
+            <column name="language" value="fi"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>

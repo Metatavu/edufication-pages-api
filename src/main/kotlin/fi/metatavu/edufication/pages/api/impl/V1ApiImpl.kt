@@ -68,7 +68,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val page = pagesController.findPage(pageId) ?: return createNotFound()
 
         pagesController.deletePage(page)
-        filesController.removeJsonPage(page)
+        filesController.removeJsonPage(path = page.path!!, language = page.language!!)
         return createNoContent()
     }
 
