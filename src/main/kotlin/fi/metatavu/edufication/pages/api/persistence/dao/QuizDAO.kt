@@ -16,7 +16,7 @@ class QuizDAO: AbstractDAO<Quiz>() {
      * @param text layout
      * @param options options
      * @param correctIndex correctIndex
-     * @return created ContentBlock
+     * @return created Quiz
      */
     fun create(id: UUID, contentBlock: ContentBlock, text: String?, options: String?, correctIndex: Int): Quiz {
         val result = Quiz()
