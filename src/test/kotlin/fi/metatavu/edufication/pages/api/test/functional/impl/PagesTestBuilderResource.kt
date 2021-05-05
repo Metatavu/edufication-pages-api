@@ -74,10 +74,11 @@ class PagesTestBuilderResource(
         )
 
         val page = Page(
-            path = "/",
+            path = "root",
             contentBlocks = arrayOf(pageContent1, pageContent2),
             status = PageStatus.dRAFT,
-            private = true
+            private = true,
+            language = "fi"
         )
 
         return api.createPage(page = page)

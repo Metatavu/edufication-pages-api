@@ -2,6 +2,7 @@ package fi.metatavu.edufication.pages.api.test.functional.auth
 
 import fi.metatavu.edufication.pages.api.client.infrastructure.ApiClient
 import fi.metatavu.edufication.pages.api.test.functional.TestBuilder
+import fi.metatavu.edufication.pages.api.test.functional.impl.LanguageTestBuilderResource
 import fi.metatavu.edufication.pages.api.test.functional.impl.PagesTestBuilderResource
 import fi.metatavu.jaxrs.test.functional.builder.auth.AccessTokenProvider
 import fi.metatavu.jaxrs.test.functional.builder.auth.AuthorizedTestBuilderAuthentication
@@ -26,6 +27,7 @@ class TestBuilderAuthentication(
     private var accessTokenProvider: AccessTokenProvider? = accessTokenProvider
 
     var pages: PagesTestBuilderResource = PagesTestBuilderResource(testBuilder, this.accessTokenProvider, createClient())
+    var languages: LanguageTestBuilderResource = LanguageTestBuilderResource(testBuilder, this.accessTokenProvider, createClient())
 
     /**
      * Creates a API client

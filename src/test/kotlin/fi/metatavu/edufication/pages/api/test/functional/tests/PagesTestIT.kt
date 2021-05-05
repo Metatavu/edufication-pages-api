@@ -87,13 +87,15 @@ class PagesTestIT {
                 uri = "",
                 path = "/kurssit",
                 contentBlocks = arrayOf(updatedContent),
-                private = false
+                private = false,
+                language = "fi"
             )
 
             val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)
             assertEquals(updatedPage.status, update.status)
             assertEquals(updatedPage.path, update.path)
             assertEquals(updatedPage.private, update.private)
+            assertEquals(updatedPage.language, update.language)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.title, update.contentBlocks.getOrNull(0)?.title)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.layout, update.contentBlocks.getOrNull(0)?.layout)
             assertEquals(updatedPage.contentBlocks.getOrNull(0)?.link, update.contentBlocks.getOrNull(0)?.link)

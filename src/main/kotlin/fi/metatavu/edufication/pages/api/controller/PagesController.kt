@@ -35,11 +35,11 @@ class PagesController {
      * @param creatorId Creator Id
      * @param contentBlocks Content Blocks for page
      * @param private page private
-     *
+     * @param language page language
      * @return created counter frame
      */
-    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean): Page {
-        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId, private = private)
+    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean, language: String): Page {
+        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId, private = private, language = language)
 
         contentBlocks.map {
             val contentBlock = contentBlockDAO.create(
@@ -101,13 +101,15 @@ class PagesController {
      * @param modifierId modifierId
      * @param contentBlocks contentBlocks
      * @param private page private
+     * @param language page language
      *
      * @return Updated Page
      */
-    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean): Page? {
+    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean, language: String): Page? {
         val pageToUpdate = pageDAO.findById(pageId) ?: return null
 
         pageDAO.updatePath(pageToUpdate, path, modifierId)
+        pageDAO.updateLanguage(pageToUpdate, language, modifierId)
         pageDAO.updatePrivate(pageToUpdate, private, modifierId)
         val result = pageDAO.updateStatus(pageToUpdate, status, modifierId)
 

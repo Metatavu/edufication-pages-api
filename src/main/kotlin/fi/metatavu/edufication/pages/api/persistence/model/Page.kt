@@ -18,6 +18,9 @@ class Page {
     var path: String? = null
 
     @Column(nullable = false)
+    var language: String? = null
+
+    @Column(nullable = false)
     var private: Boolean? = null
 
     @Column(nullable = false)

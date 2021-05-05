@@ -30,26 +30,27 @@ class FilesController {
      */
     fun storeJsonPage(page: Page): URL {
         val file = getTempPageFile(page)
-        return s3StorageProvider.uploadObject(page.path + ".json", "application/json; charset=utf-8", "", file)
+        return s3StorageProvider.uploadObject("${page.language}/${page.path}.json", "application/json; charset=utf-8", "", file)
     }
 
     /**
      * Removes a stored json page from s3
      *
-     * @param path page path to remove
+     * @param page page to remove from storage
      */
-    fun removeJsonPage(path: String) {
-        return s3StorageProvider.delete("$path.json")
+    fun removeJsonPage(page: fi.metatavu.edufication.pages.api.persistence.model.Page) {
+        return s3StorageProvider.delete("${page.language}/${page.path}.json")
     }
 
     /**
      * Returns a stored file Url
      *
-     * @param path page path to find url for
+     * @param path page path to find
+     * @param language page language to find
      * @return Page url or null if not found
      */
-    fun getPageUrl(path: String): URL? {
-        return s3StorageProvider.getObjectFullPath("$path.json")
+    fun getPageUrl(path: String, language: String): URL? {
+        return s3StorageProvider.getObjectFullPath("${language}/${path}.json")
     }
 
     /**
