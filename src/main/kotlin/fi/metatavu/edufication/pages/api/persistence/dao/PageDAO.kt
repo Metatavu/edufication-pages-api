@@ -20,7 +20,7 @@ class PageDAO: AbstractDAO<Page>() {
      * @param private page private
      * @return created VisitorSessionVariable
      */
-    fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID, private: Boolean): Page {
+    fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID, private: Boolean, language: String): Page {
         val result = Page()
         result.id = id
         result.path = path
@@ -28,6 +28,7 @@ class PageDAO: AbstractDAO<Page>() {
         result.private = private
         result.creatorId = creatorId
         result.lastModifierId = creatorId
+        result.language = language
         return persist(result)
     }
 
@@ -78,6 +79,20 @@ class PageDAO: AbstractDAO<Page>() {
      */
     fun updatePrivate(page: Page, private: Boolean, modifierId: UUID): Page {
         page.private = private
+        page.lastModifierId = modifierId
+        return persist(page)
+    }
+
+    /**
+     * Updates Page
+     *
+     * @param page Page to update
+     * @param language Page language
+     * @param modifierId modifiers id
+     * @return updated page
+     */
+    fun updateLanguage(page: Page, language: String, modifierId: UUID): Page {
+        page.language = language
         page.lastModifierId = modifierId
         return persist(page)
     }
