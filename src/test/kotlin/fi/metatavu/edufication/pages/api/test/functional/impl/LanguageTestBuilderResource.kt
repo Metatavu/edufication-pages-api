@@ -16,7 +16,7 @@ class LanguageTestBuilderResource(
     testBuilder: TestBuilder,
     private val accessTokenProvider: AccessTokenProvider?,
     apiClient: ApiClient
-):ApiTestBuilderResource<Language, ApiClient?>(testBuilder, apiClient) {
+): ApiTestBuilderResource<Language, ApiClient?>(testBuilder, apiClient) {
 
     override fun getApi(): LanguagesApi {
         ApiClient.accessToken = accessTokenProvider?.accessToken
