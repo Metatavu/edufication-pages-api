@@ -31,7 +31,6 @@ class LanguagesTestIT {
     @Test
     fun listLanguage() {
         TestBuilder().use {
-
             val emptyLanguageList = it.manager().languages.listLanguage()
             assertEquals(0, emptyLanguageList.size)
 
