@@ -7,6 +7,11 @@ import java.util.*
 import javax.enterprise.context.ApplicationScoped
 import javax.persistence.criteria.Predicate
 
+/**
+ * DAO class for pages
+ *
+ * @author Jari Nykänen
+ */
 @ApplicationScoped
 class PageDAO: AbstractDAO<Page>() {
 
@@ -14,13 +19,21 @@ class PageDAO: AbstractDAO<Page>() {
      * Creates a new Page
      *
      * @param id id
-     * @param status status
-     * @param path path
-     * @param creatorId creatorId
+     * @param status page status
+     * @param path page path
+     * @param creatorId creator id
      * @param private page private
-     * @return created VisitorSessionVariable
+     * @param language page language
+     * @return created page
      */
-    fun create(id: UUID, status: PageStatus, path: String, creatorId: UUID, private: Boolean, language: String): Page {
+    fun create(
+        id: UUID,
+        status: PageStatus,
+        path: String,
+        creatorId: UUID,
+        private: Boolean,
+        language: String
+    ): Page {
         val result = Page()
         result.id = id
         result.path = path
@@ -33,12 +46,12 @@ class PageDAO: AbstractDAO<Page>() {
     }
 
     /**
-     * Lists all pages that match the given path
+     * Lists all pages with given filters
      *
-     * @param path Path
+     * @param path path
      * @return list of pages
      */
-    fun listByPath(path: String): List<Page> {
+    fun list(path: String?): List<Page> {
         val entityManager = getEntityManager()
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteria = criteriaBuilder.createQuery(Page::class.java)
@@ -47,7 +60,9 @@ class PageDAO: AbstractDAO<Page>() {
         criteria.select(root)
         val restrictions = ArrayList<Predicate>()
 
-        restrictions.add(criteriaBuilder.like(root.get(Page_.path), "%$path%" ))
+        if (path != null) {
+            restrictions.add(criteriaBuilder.like(root.get(Page_.path), "%$path%" ))
+        }
 
         criteria.where(criteriaBuilder.and(*restrictions.toTypedArray()))
 
@@ -56,11 +71,11 @@ class PageDAO: AbstractDAO<Page>() {
     }
 
     /**
-     * Updates Page
+     * Updates page path
      *
-     * @param page Page to update
-     * @param page new path
-     * @param modifierId modifiers id
+     * @param page page to update
+     * @param page new page path
+     * @param modifierId modifier id
      * @return updated page
      */
     fun updatePath(page: Page, path: String?, modifierId: UUID): Page {
@@ -70,9 +85,9 @@ class PageDAO: AbstractDAO<Page>() {
     }
 
     /**
-     * Updates Page
+     * Updates page private status
      *
-     * @param page Page to update
+     * @param page page to update
      * @param private new private status
      * @param modifierId modifiers id
      * @return updated page
@@ -84,11 +99,11 @@ class PageDAO: AbstractDAO<Page>() {
     }
 
     /**
-     * Updates Page
+     * Updates page language
      *
-     * @param page Page to update
-     * @param language Page language
-     * @param modifierId modifiers id
+     * @param page page to update
+     * @param language page language
+     * @param modifierId modifier id
      * @return updated page
      */
     fun updateLanguage(page: Page, language: String, modifierId: UUID): Page {
@@ -98,11 +113,11 @@ class PageDAO: AbstractDAO<Page>() {
     }
 
     /**
-     * Updates Page
+     * Updates page status
      *
-     * @param page Page to update
-     * @param status new status
-     * @param modifierId modifiers id
+     * @param page page to update
+     * @param status new page status
+     * @param modifierId modifier id
      * @return updated page
      */
     fun updateStatus(page: Page, status: PageStatus?, modifierId: UUID): Page {

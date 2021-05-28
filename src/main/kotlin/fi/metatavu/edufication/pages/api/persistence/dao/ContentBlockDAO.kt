@@ -9,6 +9,11 @@ import java.util.*
 import javax.enterprise.context.ApplicationScoped
 import javax.persistence.criteria.Predicate
 
+/**
+ * DAO class for content blocks
+ *
+ * @author Jari Nykänen
+ */
 @ApplicationScoped
 class ContentBlockDAO: AbstractDAO<ContentBlock>() {
 
@@ -20,12 +25,21 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
      * @param layout layout
      * @param title title
      * @param textContent textContent
-     * @param media textContent
-     * @param link textContent
-     * @param orderInPage orderInPage
+     * @param media content block media
+     * @param link content block link
+     * @param orderInPage order in page
      * @return created ContentBlock
      */
-    fun create(id: UUID, page: Page, layout: ContentBlockLayout, title: String?, textContent: String?, media: String?, link: String?, orderInPage: Int): ContentBlock {
+    fun create(
+        id: UUID,
+        page: Page,
+        layout: ContentBlockLayout,
+        title: String?,
+        textContent: String?,
+        media: String?,
+        link: String?,
+        orderInPage: Int
+    ): ContentBlock {
         val result = ContentBlock()
         result.id = id
         result.page = page
@@ -43,7 +57,7 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
      *
      * @param contentBlock content block
      * @param quiz quiz
-     * @return Content block
+     * @return updated content block
      */
     fun updateQuiz(contentBlock: ContentBlock, quiz: Quiz): ContentBlock {
         contentBlock.quiz = quiz
@@ -54,8 +68,7 @@ class ContentBlockDAO: AbstractDAO<ContentBlock>() {
      * Lists all content for a given page
      *
      * @param page Page to find content for
-     *
-     * @return Content Block List
+     * @return list of content blocks
      */
     fun listByPage(page: Page): List<ContentBlock> {
         val entityManager = getEntityManager()

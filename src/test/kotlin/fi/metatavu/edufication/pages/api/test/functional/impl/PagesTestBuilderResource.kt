@@ -18,9 +18,23 @@ class PagesTestBuilderResource(
     apiClient: ApiClient
 ):ApiTestBuilderResource<Page, ApiClient?>(testBuilder, apiClient) {
 
+    override fun clean(page: Page) {
+        return api.deletePage(page.id!!)
+    }
+
     override fun getApi(): PagesApi {
         ApiClient.accessToken = accessTokenProvider?.accessToken
         return PagesApi(testBuilder.settings.apiBasePath)
+    }
+
+    /**
+     * Lists pages
+     *
+     * @param path filter by path
+     * @return list of pages
+     */
+    fun listPages(path: String?): Array<Page> {
+        return api.listPages(path)
     }
 
     /**
@@ -38,18 +52,25 @@ class PagesTestBuilderResource(
      *
      * @param pageId page id
      */
-    fun deletePage(pageId: UUID?) {
-        if (pageId != null) {
-            api.deletePage(pageId = pageId)
+    fun deletePage(pageId: UUID) {
+        api.deletePage(pageId = pageId)
+        removeCloseable{ closable: Any ->
+            if (closable !is Page) {
+                return@removeCloseable false
+            }
+
+            val closeablePage: Page = closable
+            closeablePage.id!! == pageId
         }
     }
 
     /**
-     * Creates a page
+     * Creates a page with default values
      *
+     * @param path page path
      * @return Created page
      */
-    fun createPage(): Page {
+    fun createDefaultPage(path: String): Page {
         val quiz1 = Quiz(
             text = "Onko hauki kala?",
             options = arrayOf("Ei", "Kyllä"),
@@ -74,14 +95,26 @@ class PagesTestBuilderResource(
         )
 
         val page = Page(
-            path = "root",
+            path = path,
             contentBlocks = arrayOf(pageContent1, pageContent2),
             status = PageStatus.dRAFT,
             private = true,
             language = "fi"
         )
 
-        return api.createPage(page = page)
+        return createPage(page)
+    }
+
+    /**
+     * Creates page and adds closable
+     *
+     * @param page page to create
+     * @return created page
+     */
+    private fun createPage(page: Page): Page {
+        val createdPage = api.createPage(page = page)
+        addClosable(createdPage)
+        return createdPage
     }
 
     /**

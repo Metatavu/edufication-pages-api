@@ -8,14 +8,13 @@ import org.junit.Assert
 
 /**
  * Abstract base class for API test resource builders
+ *
+ * @author Jari Nykänen
  */
-abstract class ApiTestBuilderResource<T, A>(protected val testBuilder: TestBuilder, private val apiClient: ApiClient):fi.metatavu.jaxrs.test.functional.builder.AbstractApiTestBuilderResource<T, A, ApiClient>(testBuilder) {
-
-    /**
-     * Empty implementation of clean method since no resources get saved and need cleaning
-     */
-    override fun clean(t: T) {
-    }
+abstract class ApiTestBuilderResource<T, A>(
+    protected val testBuilder: TestBuilder,
+    private val apiClient: ApiClient
+):fi.metatavu.jaxrs.test.functional.builder.AbstractApiTestBuilderResource<T, A, ApiClient>(testBuilder) {
 
     /**
      * Returns API client
