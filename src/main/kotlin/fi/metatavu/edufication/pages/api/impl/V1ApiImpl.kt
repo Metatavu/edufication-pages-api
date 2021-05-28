@@ -112,7 +112,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             createInternalServerError(PAGE_UPDATE_FAILED)
         } else {
             val translated = pageTranslator.translate(updatedPage)
-            filesController.storeJsonPage(page)
+            filesController.storeJsonPage(updatedPage)
             createOk(translated)
         }
     }
