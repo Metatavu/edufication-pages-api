@@ -2,10 +2,11 @@ package fi.metatavu.edufication.pages.api.controller
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import fi.metatavu.edufication.pages.api.controller.adapters.OffsetDateTimeAdapter
 import fi.metatavu.edufication.pages.api.controller.adapters.UUIDJsonAdapter
 import fi.metatavu.edufication.pages.api.files.storage.S3FileStorageProvider
-import fi.metatavu.edufication.pages.api.model.Page
+import fi.metatavu.edufication.pages.api.persistence.model.Page
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
@@ -15,6 +16,8 @@ import javax.inject.Inject
 
 /**
  * Controller class for files
+ *
+ * @author Jari Nykänen
  */
 @ApplicationScoped
 class FilesController {
@@ -25,12 +28,12 @@ class FilesController {
     /**
      * Stores a page into s3
      *
-     * @param page Page to store
+     * @param page page to store
      * @return object url
      */
     fun storeJsonPage(page: Page): URL {
         val file = getTempPageFile(page)
-        return s3StorageProvider.uploadObject("${page.language}/${page.path}.json", "application/json; charset=utf-8", "", file)
+        return s3StorageProvider.uploadObject("${page.language!!}/${page.path!!}.json", "application/json; charset=utf-8", "", file)
     }
 
     /**
@@ -64,7 +67,12 @@ class FilesController {
         val file = File.createTempFile("pending-upload", ".json")
         file.deleteOnExit()
         val writer = OutputStreamWriter(FileOutputStream(file), "UTF-8")
-        val moshi = Moshi.Builder().add(UUIDJsonAdapter()).add(OffsetDateTimeAdapter()).build()
+        val moshi = Moshi.Builder()
+            .add(UUIDJsonAdapter())
+            .add(OffsetDateTimeAdapter())
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
         val jsonAdapter: JsonAdapter<Page> = moshi.adapter(Page::class.java)
 
         val json: String = jsonAdapter.toJson(page)

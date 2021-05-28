@@ -37,12 +37,35 @@ import java.io.InputStream
 class PagesTestIT {
 
     /**
+     * Tests list pages
+     */
+    @Test
+    fun listPages() {
+        TestBuilder().use {
+            val emptyList = it.manager().pages.listPages(null)
+            assertEquals(0, emptyList.size)
+
+            val firstPage = it.manager().pages.createDefaultPage("path1")
+            val secondPage = it.manager().pages.createDefaultPage("path2")
+
+            val listWithTwoEntries = it.manager().pages.listPages(null)
+            assertEquals(2, listWithTwoEntries.size)
+
+            it.manager().pages.deletePage(firstPage.id!!)
+            it.manager().pages.deletePage(secondPage.id!!)
+
+            val emptyListAfterDelete = it.manager().pages.listPages(null)
+            assertEquals(0, emptyListAfterDelete.size)
+        }
+    }
+
+    /**
      * Tests creating page
      */
     @Test
     fun createPage() {
         TestBuilder().use {
-            val createdPage = it.manager().pages.createPage()
+            val createdPage = it.manager().pages.createDefaultPage("path1")
             assertNotNull(createdPage)
             assertNotNull(createdPage.uri)
             val quiz = createdPage.contentBlocks.find { block -> block.orderInPage == 0 }?.quiz
@@ -58,7 +81,7 @@ class PagesTestIT {
     @Test
     fun findPage() {
         TestBuilder().use {
-            val createdPage = it.manager().pages.createPage()
+            val createdPage = it.manager().pages.createDefaultPage("path1")
             assertNotNull(createdPage)
             val foundPage = it.manager().pages.findPage(createdPage.id!!)
             assertNotNull(foundPage)
@@ -71,7 +94,7 @@ class PagesTestIT {
     @Test
     fun updatePage() {
         TestBuilder().use {
-            val createdPage = it.manager().pages.createPage()
+            val createdPage = it.manager().pages.createDefaultPage("path1")
             assertNotNull(createdPage)
 
             val updatedContent = ContentBlock(
@@ -110,10 +133,10 @@ class PagesTestIT {
     @Test
     fun deletePage() {
         TestBuilder().use {
-            val createdPage = it.manager().pages.createPage()
+            val createdPage = it.manager().pages.createDefaultPage("path1")
             assertNotNull(createdPage)
             download(createdPage.uri!!).toString()
-            it.manager().pages.deletePage(createdPage.id)
+            it.manager().pages.deletePage(createdPage.id!!)
             downloadFail(createdPage.uri).toString()
         }
     }

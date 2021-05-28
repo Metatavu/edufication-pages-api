@@ -11,6 +11,7 @@ import java.util.*
  * Resource for testings Pages API
  *
  * @author Antti Leinonen
+ * @author Jari Nykänen
  */
 class LanguageTestBuilderResource(
     testBuilder: TestBuilder,
@@ -18,9 +19,22 @@ class LanguageTestBuilderResource(
     apiClient: ApiClient
 ): ApiTestBuilderResource<Language, ApiClient?>(testBuilder, apiClient) {
 
+    override fun clean(language: Language) {
+        return api.deleteLanguage(language.id!!)
+    }
+
     override fun getApi(): LanguagesApi {
         ApiClient.accessToken = accessTokenProvider?.accessToken
         return LanguagesApi(testBuilder.settings.apiBasePath)
+    }
+
+    /**
+     * Lists languages
+     *
+     * @return list of languages
+     */
+    fun listLanguage(): Array<Language> {
+        return api.listLanguages()
     }
 
     /**
@@ -38,9 +52,15 @@ class LanguageTestBuilderResource(
      *
      * @param languageId Language id
      */
-    fun deleteLanguage(languageId: UUID?) {
-        if (languageId != null) {
-            api.deleteLanguage(languageId = languageId)
+    fun deleteLanguage(languageId: UUID) {
+        api.deleteLanguage(languageId = languageId)
+        removeCloseable{ closable: Any ->
+            if (closable !is Language) {
+                return@removeCloseable false
+            }
+
+            val closeableLanguage: Language = closable
+            closeableLanguage.id!! == languageId
         }
     }
 
@@ -54,6 +74,9 @@ class LanguageTestBuilderResource(
             name = "fi"
         )
 
-        return api.createLanguage(language)
+        val createdLanguage = api.createLanguage(language)
+        addClosable(createdLanguage)
+
+        return createdLanguage
     }
 }

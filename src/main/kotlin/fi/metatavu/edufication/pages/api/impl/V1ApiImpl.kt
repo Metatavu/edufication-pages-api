@@ -32,11 +32,38 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     @Inject
     private lateinit var languageTranslator: LanguageTranslator
 
+
+    /** LANGUAGES */
+
+    override fun listLanguages(): Response {
+        val languages = languagesController.listLanguages()
+        return createOk(languages.map(languageTranslator::translate))
+    }
+
     @Transactional
     override fun createLanguage(language: Language): Response {
-        val created = languagesController.create(language.name)
+        val createdLanguage = languagesController.create(name = language.name)
 
-        return createOk(languageTranslator.translate(created))
+        return createOk(languageTranslator.translate(createdLanguage))
+    }
+
+    override fun findLanguage(languageId: UUID): Response {
+        val language = languagesController.findLanguage(languageId) ?: return createNotFound(LANGUAGE_NOT_FOUND)
+        return createOk(languageTranslator.translate(language))
+    }
+
+    @Transactional
+    override fun deleteLanguage(languageId: UUID): Response {
+        val language = languagesController.findLanguage(languageId) ?: return createNotFound(LANGUAGE_NOT_FOUND)
+        languagesController.deleteLanguage(language)
+        return createNoContent()
+    }
+
+    /** PAGES */
+
+    override fun listPages(path: String?): Response {
+        val pages = pagesController.list(path)
+        return createOk(pages.map(pageTranslator::translate))
     }
 
     @Transactional
@@ -52,29 +79,8 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             language = page.language
         )
 
-        filesController.storeJsonPage(page)
+        filesController.storeJsonPage(createdPage)
         return createOk(pageTranslator.translate(createdPage))
-    }
-
-    @Transactional
-    override fun deleteLanguage(languageId: UUID): Response {
-        val language = languagesController.findLanguage(languageId) ?: return createNotFound(LANGUAGE_NOT_FOUND)
-        languagesController.deleteLanguage(language)
-        return createNoContent()
-    }
-
-    @Transactional
-    override fun deletePage(pageId: UUID): Response {
-        val page = pagesController.findPage(pageId) ?: return createNotFound()
-
-        pagesController.deletePage(page)
-        filesController.removeJsonPage(path = page.path!!, language = page.language!!)
-        return createNoContent()
-    }
-
-    override fun findLanguage(languageId: UUID): Response {
-        val language = languagesController.findLanguage(languageId) ?: return createNotFound(LANGUAGE_NOT_FOUND)
-        return createOk(languageTranslator.translate(language))
     }
 
     override fun findPage(pageId: UUID): Response {
@@ -83,23 +89,13 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         return createOk(pageTranslator.translate(foundPage))
     }
 
-    override fun listLanguages(): Response {
-        val languages = languagesController.listLanguages()
-        return createOk(languageTranslator.translate(languages))
-    }
-
-    override fun listPages(path: String?): Response {
-        val pages = pagesController.listPages(path)
-
-        return createOk(pageTranslator.translate(pages))
-    }
-
     @Transactional
     override fun updatePage(pageId: UUID, page: Page): Response {
         val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
+        val foundPage = pagesController.findPage(pageId) ?: return createNotFound("Page with id $pageId could not be found")
 
         val updatedPage = pagesController.update(
-            pageId = pageId,
+            page = foundPage,
             status = page.status,
             path = page.path,
             modifierId = userId,
@@ -108,13 +104,22 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             language = page.language
         )
 
-        return if (updatedPage == null) {
-            createInternalServerError(PAGE_UPDATE_FAILED)
-        } else {
-            val translated = pageTranslator.translate(updatedPage)
-            filesController.storeJsonPage(updatedPage)
-            createOk(translated)
+          filesController.storeJsonPage(updatedPage)
+          return createOk(pageTranslator.translate(updatedPage))
+    }
+
+    @Transactional
+    override fun deletePage(pageId: UUID): Response {
+        val page = pagesController.findPage(pageId) ?: return createNotFound()
+        pagesController.deletePage(page)
+
+        val path = page.path
+        val language = page.language
+        if (path != null && language != null) {
+            filesController.removeJsonPage(path = path, language = language)
         }
+
+        return createNoContent()
     }
 
     override fun ping(): Response {

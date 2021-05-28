@@ -6,6 +6,11 @@ import fi.metatavu.edufication.pages.api.persistence.model.Quiz
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
+/**
+ * Translator class for content blocks
+ *
+ * @author Jari Nykänen
+ */
 @ApplicationScoped
 class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufication.pages.api.model.ContentBlock>() {
 
@@ -32,7 +37,7 @@ class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufi
      * @return Api model quiz
      */
     private fun translateQuiz(quiz: Quiz): fi.metatavu.edufication.pages.api.model.Quiz {
-        var result = fi.metatavu.edufication.pages.api.model.Quiz()
+        val result = fi.metatavu.edufication.pages.api.model.Quiz()
         result.text = quiz.text
         result.correctIndex = quiz.correctIndex
         result.options = pagesController.parseOptions(quiz.options)

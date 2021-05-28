@@ -14,6 +14,8 @@ import javax.inject.Inject
 
 /**
  * Controller class for pages
+ *
+ * @author Jari Nykänen
  */
 @ApplicationScoped
 class PagesController {
@@ -38,8 +40,22 @@ class PagesController {
      * @param language page language
      * @return created counter frame
      */
-    fun create (status: PageStatus, path: String, creatorId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean, language: String): Page {
-        val createdPage = pageDAO.create(id = UUID.randomUUID(), status = status, path = path, creatorId = creatorId, private = private, language = language)
+    fun create (
+        status: PageStatus,
+        path: String,
+        creatorId: UUID,
+        contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>,
+        private: Boolean,
+        language: String
+    ): Page {
+        val createdPage = pageDAO.create(
+            id = UUID.randomUUID(),
+            status = status,
+            path = path,
+            creatorId = creatorId,
+            private = private,
+            language = language
+        )
 
         contentBlocks.map {
             val contentBlock = contentBlockDAO.create(
@@ -71,8 +87,7 @@ class PagesController {
      * Finds a page from the database
      *
      * @param pageId page id to find
-     *
-     * @return Page or null if not found
+     * @return page or null if not found
      */
     fun findPage(pageId: UUID): Page? {
         return pageDAO.findById(pageId)
@@ -82,45 +97,46 @@ class PagesController {
      * List pages with optional path filter
      *
      * @param path path that must be contained in page path
-     *
      * @return list of pages
      */
-    fun listPages(path: String?): List<Page> {
-        return when (path != null) {
-            true -> listPagesByPath(path)
-            else -> listAll()
-        }
+    fun list(path: String?): List<Page> {
+        return pageDAO.list(path)
     }
 
     /**
      * Updates page
      *
-     * @param pageId Page id
+     * @param page page to update
      * @param status status
      * @param path page path
      * @param modifierId modifierId
      * @param contentBlocks contentBlocks
      * @param private page private
      * @param language page language
-     *
      * @return Updated Page
      */
-    fun update(pageId: UUID, status: PageStatus, path: String, modifierId: UUID, contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>, private: Boolean, language: String): Page? {
-        val pageToUpdate = pageDAO.findById(pageId) ?: return null
+    fun update(
+      page: Page,
+      status: PageStatus,
+      path: String,
+      modifierId: UUID,
+      contentBlocks: List<fi.metatavu.edufication.pages.api.model.ContentBlock>,
+      private: Boolean,
+      language: String
+    ): Page {
+        val result = pageDAO.updatePath(page, path, modifierId)
+        pageDAO.updateLanguage(result, language, modifierId)
+        pageDAO.updatePrivate(result, private, modifierId)
+        pageDAO.updateStatus(result, status, modifierId)
 
-        pageDAO.updatePath(pageToUpdate, path, modifierId)
-        pageDAO.updateLanguage(pageToUpdate, language, modifierId)
-        pageDAO.updatePrivate(pageToUpdate, private, modifierId)
-        val result = pageDAO.updateStatus(pageToUpdate, status, modifierId)
-
-        contentBlockDAO.listByPage(pageToUpdate).forEach {
+        contentBlockDAO.listByPage(result).forEach {
             contentBlockDAO.delete(it)
         }
 
         contentBlocks.map {
             val contentBlock = contentBlockDAO.create(
                 id = UUID.randomUUID(),
-                page = pageToUpdate,
+                page = result,
                 layout = it.layout!!,
                 title = it.title,
                 textContent = it.textContent,
@@ -151,9 +167,7 @@ class PagesController {
      */
     fun parseOptions(options: String?): List<String?>? {
         options ?: return listOf()
-        val objectMapper = ObjectMapper()
-
-        return objectMapper.readValue(options, object : TypeReference<List<String?>?>() {})
+        return ObjectMapper().readValue(options, object : TypeReference<List<String?>?>() {})
     }
 
     /**
@@ -165,6 +179,7 @@ class PagesController {
         contentBlockDAO.listByPage(page).forEach {
             contentBlockDAO.delete(it)
         }
+
         return pageDAO.delete(page)
     }
 
@@ -172,32 +187,12 @@ class PagesController {
      * Returns all content blocks that belong to the given page
      *
      * @param page Page to find content for
-     *
      * @return List of ContentBlocks
      */
     fun getPageContent(page: Page): List<ContentBlock> {
         return contentBlockDAO.listByPage(page)
     }
 
-    /**
-     * Lists pages by path
-     *
-     * @param path path that must be contained in results path
-     *
-     * @return List of Pages
-     */
-    private fun listPagesByPath(path: String): List<Page> {
-        return pageDAO.listByPath(path = path)
-    }
-
-    /**
-     * Lists all pages
-     *
-     * @return List of Pages
-     */
-    private fun listAll(): List<Page> {
-        return pageDAO.listAll()
-    }
 
     /**
      * Serializes the object into JSON string
