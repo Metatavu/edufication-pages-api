@@ -6,7 +6,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import fi.metatavu.edufication.pages.api.controller.adapters.OffsetDateTimeAdapter
 import fi.metatavu.edufication.pages.api.controller.adapters.UUIDJsonAdapter
 import fi.metatavu.edufication.pages.api.files.storage.S3FileStorageProvider
-import fi.metatavu.edufication.pages.api.persistence.model.Page
+import fi.metatavu.edufication.pages.api.model.Page
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
