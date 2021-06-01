@@ -65,7 +65,7 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link,
+                link = getDataAsString(it.link),
                 orderInPage = it.orderInPage
             )
             if (it.quiz != null) {
@@ -141,7 +141,7 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link,
+                link = getDataAsString(it.link),
                 orderInPage = it.orderInPage
             )
             if (it.quiz != null) {
@@ -157,17 +157,6 @@ class PagesController {
         }
 
         return result
-    }
-
-    /**
-     * Parses event triggers string as list of event triggers objects
-     *
-     * @param options event triggers string
-     * @return list of event triggers objects
-     */
-    fun parseOptions(options: String?): List<String?>? {
-        options ?: return listOf()
-        return ObjectMapper().readValue(options, object : TypeReference<List<String?>?>() {})
     }
 
     /**
@@ -200,7 +189,9 @@ class PagesController {
      * @param data object
      * @return JSON string
      */
-    private fun <T> getDataAsString(data: T): String {
+    private fun <T> getDataAsString(data: T?): String? {
+        data ?: return null
+
         val objectMapper = ObjectMapper()
         return objectMapper.writeValueAsString(data)
     }

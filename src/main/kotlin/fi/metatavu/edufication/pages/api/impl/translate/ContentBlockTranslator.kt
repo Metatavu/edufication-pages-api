@@ -1,10 +1,11 @@
 package fi.metatavu.edufication.pages.api.impl.translate
 
-import fi.metatavu.edufication.pages.api.controller.PagesController
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import fi.metatavu.edufication.pages.api.model.Link
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.Quiz
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 
 /**
  * Translator class for content blocks
@@ -14,13 +15,10 @@ import javax.inject.Inject
 @ApplicationScoped
 class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufication.pages.api.model.ContentBlock>() {
 
-    @Inject
-    private lateinit var pagesController: PagesController
-
     override fun translate(entity: ContentBlock): fi.metatavu.edufication.pages.api.model.ContentBlock {
         val translated = fi.metatavu.edufication.pages.api.model.ContentBlock()
         translated.layout = entity.layout
-        translated.link = entity.link
+        translated.link = getLink(entity.link)
         translated.media = entity.media
         translated.textContent = entity.textContent
         translated.title = entity.title
@@ -40,7 +38,29 @@ class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufi
         val result = fi.metatavu.edufication.pages.api.model.Quiz()
         result.text = quiz.text
         result.correctIndex = quiz.correctIndex
-        result.options = pagesController.parseOptions(quiz.options)
+        result.options = parseOptions(quiz.options)
         return result
+    }
+
+    /**
+     * Parses event triggers string as list of event triggers objects
+     *
+     * @param options event triggers string
+     * @return list of event triggers objects
+     */
+    private fun parseOptions(options: String?): List<String?>? {
+        options ?: return listOf()
+        return ObjectMapper().readValue(options, object : TypeReference<List<String?>?>() {})
+    }
+
+    /**
+     * Deserialize entity link string to spec Link object
+     *
+     * @param link entity link object string
+     * @return deserialized Link object
+     */
+    private fun getLink(link: String?): Link? {
+        link ?: return null
+        return ObjectMapper().readValue(link, object : TypeReference<Link>() {})
     }
 }
