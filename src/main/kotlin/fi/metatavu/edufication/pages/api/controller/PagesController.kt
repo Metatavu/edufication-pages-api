@@ -160,17 +160,6 @@ class PagesController {
     }
 
     /**
-     * Parses event triggers string as list of event triggers objects
-     *
-     * @param options event triggers string
-     * @return list of event triggers objects
-     */
-    fun parseOptions(options: String?): List<String?>? {
-        options ?: return listOf()
-        return ObjectMapper().readValue(options, object : TypeReference<List<String?>?>() {})
-    }
-
-    /**
      * Deletes a page from the database
      *
      * @param page page to delete

@@ -90,13 +90,7 @@ class PagesTestBuilderResource(
         )
 
         val pageContent2 = ContentBlock (
-            textContent = "Lorem ipsum dolor sit amet as simo ber",
-            link = Link(
-                title = "title 2",
-                url = "www.kissa.com",
-            ),
             layout = ContentBlockLayout.mEDIALEFTARTICLE,
-            title = "Tämä on lisää sivuston sisältöä",
             orderInPage = 1
         )
 
