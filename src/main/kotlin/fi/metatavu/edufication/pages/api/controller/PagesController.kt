@@ -65,7 +65,7 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link,
+                link = getDataAsString(it.link),
                 orderInPage = it.orderInPage
             )
             if (it.quiz != null) {
@@ -141,7 +141,7 @@ class PagesController {
                 title = it.title,
                 textContent = it.textContent,
                 media = it.media,
-                link = it.link,
+                link = getDataAsString(it.link),
                 orderInPage = it.orderInPage
             )
             if (it.quiz != null) {
@@ -200,7 +200,9 @@ class PagesController {
      * @param data object
      * @return JSON string
      */
-    private fun <T> getDataAsString(data: T): String {
+    private fun <T> getDataAsString(data: T?): String? {
+        data ?: return null
+
         val objectMapper = ObjectMapper()
         return objectMapper.writeValueAsString(data)
     }

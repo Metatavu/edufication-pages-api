@@ -79,7 +79,10 @@ class PagesTestBuilderResource(
 
         val pageContent1 = ContentBlock (
             textContent = "Lorem ipsum dolor sit amet",
-            link = "www.kissa.fi",
+            link = Link(
+                title = "title 1",
+                url = "www.kissa.com",
+            ),
             layout = ContentBlockLayout.mEDIALEFT,
             title = "Tämä on sivuston sisältöä",
             orderInPage = 0,
@@ -88,7 +91,10 @@ class PagesTestBuilderResource(
 
         val pageContent2 = ContentBlock (
             textContent = "Lorem ipsum dolor sit amet as simo ber",
-            link = "www.kissa.com",
+            link = Link(
+                title = "title 2",
+                url = "www.kissa.com",
+            ),
             layout = ContentBlockLayout.mEDIALEFTARTICLE,
             title = "Tämä on lisää sivuston sisältöä",
             orderInPage = 1

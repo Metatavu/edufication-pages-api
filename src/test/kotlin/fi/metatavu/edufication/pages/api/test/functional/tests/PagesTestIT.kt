@@ -1,9 +1,6 @@
 package fi.metatavu.edufication.pages.api.test.functional.tests
 
-import fi.metatavu.edufication.pages.api.client.models.ContentBlock
-import fi.metatavu.edufication.pages.api.client.models.ContentBlockLayout
-import fi.metatavu.edufication.pages.api.client.models.Page
-import fi.metatavu.edufication.pages.api.client.models.PageStatus
+import fi.metatavu.edufication.pages.api.client.models.*
 import fi.metatavu.edufication.pages.api.test.functional.TestBuilder
 import fi.metatavu.edufication.pages.api.test.functional.resources.KeycloakTestResource
 import fi.metatavu.edufication.pages.api.test.functional.resources.LocalTestProfile
@@ -101,7 +98,10 @@ class PagesTestIT {
                 title = "Title 123123",
                 textContent = "Text text text 123 123 123 ÄÄÄ ÖÖÖ",
                 media = "media.fi",
-                link = "google.fi",
+                link = Link(
+                    title = "Updated title",
+                    url = "www.updatedlink.com",
+                ),
                 layout = ContentBlockLayout.mEDIALEFT,
                 orderInPage = 0
             )
