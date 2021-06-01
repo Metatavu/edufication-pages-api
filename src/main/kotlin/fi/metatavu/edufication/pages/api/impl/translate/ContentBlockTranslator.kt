@@ -60,7 +60,10 @@ class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufi
      * @return deserialized Link object
      */
     private fun getLink(link: String?): Link? {
-        link ?: return null
+        if (link == null || link == "") {
+            return null
+        }
+    
         return ObjectMapper().readValue(link, object : TypeReference<Link>() {})
     }
 }
