@@ -56,19 +56,20 @@ class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufi
     /**
      * Deserialize entity link string to spec Link object
      *
-     * @param link entity link object string
+     * @param linkString entity link object string
      * @return deserialized Link object
      */
-    private fun getLink(link: String?): Link? {
-        link ?: return null
+    private fun getLink(linkString: String?): Link? {
+        linkString ?: return null
 
-        try {
-            return ObjectMapper().readValue(link, object : TypeReference<Link>() {})
-        } catch(Exception e) {
-            return Link(
-                title = "",
-                url: link
-            )
+        return try {
+            ObjectMapper().readValue(linkString, object : TypeReference<Link>() {})
+        } catch (e: Exception) {
+            val link = fi.metatavu.edufication.pages.api.model.Link()
+            link.title = ""
+            link.url = linkString
+
+            link
         }
     }
 }
