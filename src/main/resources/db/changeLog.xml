@@ -1,0 +1,128 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="pages" author="antti.leinonen">
+        <createTable tableName="page">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="status" type="varchar(191)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="path" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="createdat" type="datetime(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modifiedat" type="datetime(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creatorid" type="binary(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastmodifierid" type="binary(16)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="contentblock" author="antti.leinonen">
+        <createTable tableName="contentblock">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="page_id" type="binary(16)">
+                <constraints nullable="false" foreignKeyName="FK_CONTENT_BLOCK_PAGE_ID" referencedColumnNames="id" referencedTableName="page"/>
+            </column>
+            <column name="layout" type="varchar(191)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(191)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="textcontent" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="media" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+            <column name="link" type="longtext">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="layoutschange" author="antti.leinonen">
+        <addColumn tableName="page">
+            <column name="private" type="bit(1)" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="contentblock">
+            <column name="orderinpage" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="layoutenumschange" author="antti.leinonen">
+        <update tableName="contentblock">
+            <column name="layout" value="MEDIA_RIGHT"/>
+        </update>
+    </changeSet>
+    <changeSet id="statuschange" author="antti.leinonen">
+        <update tableName="page">
+            <column name="status" value="PUBLIC"/>
+        </update>
+    </changeSet>
+    <changeSet id="statuschangenumber" author="antti.leinonen">
+        <update tableName="page">
+            <column name="status" value="0"/>
+        </update>
+    </changeSet>
+    <changeSet id="layoutenumschangenumber" author="antti.leinonen">
+        <update tableName="contentblock">
+            <column name="layout" value="0"/>
+        </update>
+    </changeSet>
+    <changeSet id="quizsupport" author="antti.leinonen">
+        <createTable tableName="quiz">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="text" type="VARCHAR(255)"/>
+            <column name="options" type="longtext"/>
+            <column name="correctIndex" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="quizsupportcontentblock" author="antti.leinonen">
+        <addColumn tableName="contentblock">
+            <column name="quiz_id" type="binary(16)">
+                <constraints nullable="true" foreignKeyName="FK_CONTENTBLOCK_ON_QUIZ" referencedColumnNames="id" referencedTableName="quiz"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="languages" author="antti.leinonen">
+        <createTable tableName="language">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(191)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="languages_mirate" author="antti.leinonen">
+        <addColumn tableName="page">
+            <column name="language" type="varchar(191)" defaultValue="fi">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="languages_mirate_set_fi" author="antti.leinonen">
+        <update tableName="page">
+            <column name="language" value="fi"/>
+        </update>
+    </changeSet>
+</databaseChangeLog>
