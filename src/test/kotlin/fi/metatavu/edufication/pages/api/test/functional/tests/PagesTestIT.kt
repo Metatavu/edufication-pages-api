@@ -110,8 +110,6 @@ class PagesTestIT {
 
             assertEquals(1, updatedChildPage2.childPages?.size)
             assertEquals(subPage2.id, updatedChildPage2.childPages?.get(0)?.id)
-
-
         }
     }
 
