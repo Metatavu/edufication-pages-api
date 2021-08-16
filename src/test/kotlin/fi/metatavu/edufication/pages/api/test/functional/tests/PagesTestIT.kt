@@ -158,7 +158,7 @@ class PagesTestIT {
                 language = "fi"
             )
 
-            val update = it.manager().pages.updatePage(createdPage.id!!, createdPage)
+            val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)
             assertEquals(updatedPage.status, update.status)
             assertEquals(updatedPage.path, update.path)
             assertEquals(updatedPage.private, update.private)
