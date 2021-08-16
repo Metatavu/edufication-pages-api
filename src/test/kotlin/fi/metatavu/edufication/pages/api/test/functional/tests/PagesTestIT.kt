@@ -13,8 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.junit.Assert
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.InputStream
 
@@ -73,6 +72,50 @@ class PagesTestIT {
     }
 
     /**
+     * Tests page hierarchy
+     */
+    @Test
+    fun testPageHierarchy() {
+        TestBuilder().use {
+            val paths = arrayOf("/root", "/root/child1", "/root/child2", "/root/child1/subpage1", "/root/child1/subpage2")
+
+            val createdPages = paths.map { path ->
+                it.manager().pages.createDefaultPage(path)
+            }
+
+            val ( rootPage, childPage1, childPage2, subPage1, subPage2 ) = createdPages.map { createdPage ->
+                it.manager().pages.findPage(createdPage.id!!)
+            }
+
+            assertNull(rootPage.parentPage)
+            assertEquals(rootPage.id, childPage1.parentPage?.id)
+            assertEquals(childPage1.id, subPage1.parentPage?.id)
+            assertEquals(childPage1.id, subPage2.parentPage?.id)
+
+            assertEquals(2, rootPage.childPages?.size)
+            assertEquals(2, childPage1.childPages?.size)
+            assertEquals(0, childPage2.childPages?.size)
+
+            assertNotNull(childPage1.childPages?.map(PageReference::id)?.find { i -> i == subPage1.id })
+            assertNotNull(childPage1.childPages?.map(PageReference::id)?.find { i -> i == subPage2.id })
+
+            val updatedSubpage2 = it.manager().pages.updatePage(pageId = subPage2.id!!, page = subPage2.copy(path = "/root/child2/subpage2"))
+            assertEquals(childPage2.id, updatedSubpage2.parentPage?.id)
+
+            val updatedChildPage1 = it.manager().pages.findPage(pageId = childPage1.id!! )
+            val updatedChildPage2 = it.manager().pages.findPage(pageId = childPage2.id!! )
+
+            assertEquals(1, updatedChildPage1.childPages?.size)
+            assertEquals(subPage1.id, updatedChildPage1.childPages?.get(0)?.id)
+
+            assertEquals(1, updatedChildPage2.childPages?.size)
+            assertEquals(subPage2.id, updatedChildPage2.childPages?.get(0)?.id)
+
+
+        }
+    }
+
+    /**
      * Tests finding page
      */
     @Test
@@ -105,7 +148,8 @@ class PagesTestIT {
                 layout = ContentBlockLayout.mEDIALEFT,
                 orderInPage = 0
             )
-            val updatedPage = Page(
+
+            val updatedPage = createdPage.copy(
                 status = PageStatus.pUBLIC,
                 uri = "",
                 path = "/kurssit",
@@ -114,7 +158,7 @@ class PagesTestIT {
                 language = "fi"
             )
 
-            val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)
+            val update = it.manager().pages.updatePage(createdPage.id!!, createdPage)
             assertEquals(updatedPage.status, update.status)
             assertEquals(updatedPage.path, update.path)
             assertEquals(updatedPage.private, update.private)
