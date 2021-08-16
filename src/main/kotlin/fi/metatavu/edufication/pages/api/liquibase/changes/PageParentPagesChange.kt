@@ -1,9 +1,9 @@
 package fi.metatavu.edufication.pages.api.liquibase.changes
 
-import antlr.StringUtils
 import liquibase.database.Database
 import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.CustomChangeException
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Custom Liquibase migrations for adding page parent ids
@@ -65,7 +65,7 @@ class PageParentPagesChange: AbstractCustomTaskChange() {
      * @return parent path for given path
      */
     private fun getParentPath(path: String): String? {
-        val slugs = StringUtils.stripBack(path, '/').split('/')
+        val slugs = StringUtils.removeEnd(path, "/").split('/')
         val parentPath = slugs.dropLast(1).joinToString("/")
 
         return parentPath.ifBlank { null }
