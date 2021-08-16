@@ -68,11 +68,7 @@ class PageParentPagesChange: AbstractCustomTaskChange() {
         val slugs = StringUtils.stripBack(path, '/').split('/')
         val parentPath = slugs.dropLast(1).joinToString("/")
 
-        return if (parentPath.isBlank()) {
-            null
-        }  else {
-            parentPath
-        }
+        return parentPath.ifBlank { null }
     }
 
     /**
