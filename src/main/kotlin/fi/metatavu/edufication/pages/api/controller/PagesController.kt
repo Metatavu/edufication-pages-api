@@ -1,7 +1,5 @@
 package fi.metatavu.edufication.pages.api.controller
 
-import antlr.StringUtils
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import fi.metatavu.edufication.pages.api.model.PageStatus
 import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockDAO
@@ -9,6 +7,7 @@ import fi.metatavu.edufication.pages.api.persistence.dao.PageDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.QuizDAO
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
 import fi.metatavu.edufication.pages.api.persistence.model.Page
+import org.apache.commons.lang3.StringUtils
 import java.util.*
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
@@ -136,7 +135,7 @@ class PagesController {
      * @return parent path for given path
      */
     fun getParentPath(path: String): String? {
-        val slugs = StringUtils.stripBack(path, '/').split('/')
+        val slugs = StringUtils.removeEnd(path, "/").split('/')
         val parentPath = slugs.dropLast(1).joinToString("/")
 
         return parentPath.ifBlank { null }
