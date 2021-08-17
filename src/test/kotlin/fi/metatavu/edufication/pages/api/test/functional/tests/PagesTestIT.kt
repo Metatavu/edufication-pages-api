@@ -1,6 +1,11 @@
 package fi.metatavu.edufication.pages.api.test.functional.tests
 
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import fi.metatavu.edufication.pages.api.client.models.*
+import fi.metatavu.edufication.pages.api.test.common.moshi.adapters.OffsetDateTimeAdapter
+import fi.metatavu.edufication.pages.api.test.common.moshi.adapters.UUIDJsonAdapter
 import fi.metatavu.edufication.pages.api.test.functional.TestBuilder
 import fi.metatavu.edufication.pages.api.test.functional.resources.KeycloakTestResource
 import fi.metatavu.edufication.pages.api.test.functional.resources.LocalTestProfile
@@ -12,6 +17,7 @@ import io.quarkus.test.junit.TestProfile
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okio.Okio
 import org.junit.Assert
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -135,6 +141,8 @@ class PagesTestIT {
             val createdPage = it.manager().pages.createDefaultPage("path1")
             assertNotNull(createdPage)
 
+            assertEquals(PageTemplate.eDUFICATION, createdPage.template)
+
             val updatedContent = ContentBlock(
                 title = "Title 123123",
                 textContent = "Text text text 123 123 123 ÄÄÄ ÖÖÖ",
@@ -149,6 +157,7 @@ class PagesTestIT {
 
             val updatedPage = createdPage.copy(
                 status = PageStatus.pUBLIC,
+                template = PageTemplate.rOBOCOAST,
                 uri = "",
                 path = "/kurssit",
                 contentBlocks = arrayOf(updatedContent),
@@ -157,6 +166,7 @@ class PagesTestIT {
             )
 
             val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)
+            assertEquals(updatedPage.template, update.template)
             assertEquals(updatedPage.status, update.status)
             assertEquals(updatedPage.path, update.path)
             assertEquals(updatedPage.private, update.private)
@@ -183,13 +193,68 @@ class PagesTestIT {
         }
     }
 
+    @Test
+    fun testStoredPageTemplate() {
+        TestBuilder().use {
+            it.manager().pages.createDefaultPage(path = "/edufication", template = PageTemplate.eDUFICATION)
+            it.manager().pages.createDefaultPage(path = "/robocoast", template = PageTemplate.rOBOCOAST)
+            val createdInheritedPage = it.manager().pages.createDefaultPage("/edufication/inherit", template = PageTemplate.iNHERIT)
+
+            assertEquals(PageTemplate.iNHERIT, createdInheritedPage.template)
+            val createdStoredPage = getStoredPage(createdInheritedPage.uri)
+            assertNotNull(createdStoredPage)
+            assertEquals(PageTemplate.eDUFICATION, createdStoredPage!!.template)
+
+            val updatedInheritedPage = it.manager().pages.updatePage(createdInheritedPage.id!!, createdInheritedPage.copy(path = "/robocoast/inherit"))
+
+            assertEquals(PageTemplate.iNHERIT, updatedInheritedPage.template)
+            val updatedStoredPage = getStoredPage(updatedInheritedPage.uri)
+            assertNotNull(updatedStoredPage)
+            assertEquals(PageTemplate.rOBOCOAST, updatedStoredPage!!.template)
+        }
+    }
+
+    /**
+     * Downloads stored file from URI
+     *
+     * @param uri URI
+     * @return stored file or null if not found
+     */
+    private fun getStoredPage(uri: String?): Page? {
+        uri ?: return null
+        val data = download(uri) ?: return null
+        return data.use(this::readStoredPage)
+    }
+
+    /**
+     * Reads stored file from input stream
+     *
+     * @param data data
+     * @return stored file
+     */
+    private fun readStoredPage(data: InputStream): Page? {
+        val moshi = Moshi.Builder()
+            .add(UUIDJsonAdapter())
+            .add(OffsetDateTimeAdapter())
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+        val jsonAdapter: JsonAdapter<Page> = moshi.adapter(Page::class.java)
+
+        Okio.source(data).use {
+            Okio.buffer(it).use {
+                return jsonAdapter.fromJson(it)
+            }
+        }
+    }
+
     /**
      * Downloads a file and asserts that the download succeeds
      *
      * @param uri path to download from
      * @return file input stream
      */
-    fun download(uri: String): InputStream? {
+    private fun download(uri: String): InputStream? {
         val request: Request = Request.Builder()
             .url(uri)
             .get()
@@ -209,7 +274,7 @@ class PagesTestIT {
      *
      * @param uri path to attempt download from
      */
-    fun downloadFail(uri: String) {
+    private fun downloadFail(uri: String) {
         val request: Request = Request.Builder()
             .url(uri)
             .get()

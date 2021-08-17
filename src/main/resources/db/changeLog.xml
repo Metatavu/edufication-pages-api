@@ -138,4 +138,12 @@
         <customChange class="fi.metatavu.edufication.pages.api.liquibase.changes.PageParentPagesChange"/>
     </changeSet>
 
+    <changeSet id="page_templates" author="antti.leppa">
+        <addColumn tableName="page">
+            <column name="template" type="varchar(191)" defaultValue="EDUFICATION">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

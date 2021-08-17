@@ -1,4 +1,4 @@
-package fi.metatavu.edufication.pages.api.controller.adapters
+package fi.metatavu.edufication.pages.api.test.common.moshi.adapters
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson

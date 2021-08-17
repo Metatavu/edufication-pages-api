@@ -1,6 +1,5 @@
 package fi.metatavu.edufication.pages.api.impl
 
-import fi.metatavu.edufication.pages.api.controller.FilesController
 import fi.metatavu.edufication.pages.api.controller.LanguagesController
 import fi.metatavu.edufication.pages.api.controller.PagesController
 import fi.metatavu.edufication.pages.api.impl.translate.LanguageTranslator
@@ -8,6 +7,7 @@ import fi.metatavu.edufication.pages.api.impl.translate.PageTranslator
 import fi.metatavu.edufication.pages.api.model.Language
 import fi.metatavu.edufication.pages.api.model.Page
 import fi.metatavu.edufication.pages.api.spec.V1Api
+import fi.metatavu.edufication.pages.api.storage.StorageController
 import java.util.*
 import javax.enterprise.context.RequestScoped
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     private lateinit var pagesController: PagesController
 
     @Inject
-    private lateinit var filesController: FilesController
+    private lateinit var storageController: StorageController
 
     @Inject
     private lateinit var languagesController: LanguagesController
@@ -76,6 +76,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         }
 
         val createdPage = pagesController.create(
+            template = page.template,
             status = page.status,
             path = path,
             parent = parent,
@@ -85,9 +86,14 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             language = page.language
         )
 
-        page.id = createdPage.id
-        filesController.storeJsonPage(page)
-        return createOk(pageTranslator.translate(createdPage))
+        val result = pageTranslator.translate(createdPage)
+
+        storageController.storePage(
+            page = createdPage,
+            translatedPage = result
+        )
+
+        return createOk(result)
     }
 
     override fun findPage(pageId: UUID): Response {
@@ -109,6 +115,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         }
 
         val updatedPage = pagesController.update(
+            template = page.template,
             page = foundPage,
             status = page.status,
             path = path,
@@ -119,19 +126,21 @@ class V1ApiImpl: V1Api, AbstractApi()  {
             language = page.language
         )
 
-        filesController.storeJsonPage(page)
-        return createOk(pageTranslator.translate(updatedPage))
+        val result = pageTranslator.translate(updatedPage)
+
+        storageController.storePage(
+            page = updatedPage,
+            translatedPage = result
+        )
+
+        return createOk(result)
     }
 
     override fun deletePage(pageId: UUID): Response {
         val page = pagesController.findPage(pageId) ?: return createNotFound()
-        pagesController.deletePage(page)
 
-        val path = page.path
-        val language = page.language
-        if (path != null && language != null) {
-            filesController.removeJsonPage(path = path, language = language)
-        }
+        storageController.deletePage(page)
+        pagesController.deletePage(page)
 
         return createNoContent()
     }
@@ -143,7 +152,6 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     companion object {
         const val NO_VALID_USER_MESSAGE = "No valid user!"
         const val PAGE_NOT_FOUND_MESSAGE = "Page not found!"
-        const val PAGE_UPDATE_FAILED = "Page update failed!"
         const val LANGUAGE_NOT_FOUND = "Language not found!"
     }
 }

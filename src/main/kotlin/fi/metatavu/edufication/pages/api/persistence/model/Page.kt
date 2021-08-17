@@ -1,6 +1,7 @@
 package fi.metatavu.edufication.pages.api.persistence.model
 
 import fi.metatavu.edufication.pages.api.model.PageStatus
+import fi.metatavu.edufication.pages.api.model.PageTemplate
 import java.time.OffsetDateTime
 import java.util.*
 import javax.persistence.*
@@ -13,6 +14,10 @@ class Page {
 
     @Column(nullable = true)
     var status: PageStatus? = null
+
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
+    var template: PageTemplate? = null
 
     @ManyToOne
     var parent: Page? = null
