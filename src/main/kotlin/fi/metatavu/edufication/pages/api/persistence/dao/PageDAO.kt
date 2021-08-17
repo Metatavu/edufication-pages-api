@@ -32,6 +32,7 @@ class PageDAO: AbstractDAO<Page>() {
         path: String,
         creatorId: UUID,
         private: Boolean,
+        parent: Page?,
         language: String
     ): Page {
         val result = Page()
@@ -39,6 +40,7 @@ class PageDAO: AbstractDAO<Page>() {
         result.path = path
         result.status = status
         result.private = private
+        result.parent = parent
         result.creatorId = creatorId
         result.lastModifierId = creatorId
         result.language = language
@@ -71,6 +73,42 @@ class PageDAO: AbstractDAO<Page>() {
     }
 
     /**
+     * Lists child pages
+     *
+     * @param parent parent page
+     * @return list of child pages
+     */
+    fun listByParent(parent: Page): List<Page> {
+        val entityManager = getEntityManager()
+        val criteriaBuilder = entityManager.criteriaBuilder
+        val criteria = criteriaBuilder.createQuery(Page::class.java)
+        val root = criteria.from(Page::class.java)
+
+        criteria.select(root)
+        criteria.where(criteriaBuilder.equal(root.get(Page_.parent), parent))
+
+        val query = entityManager.createQuery(criteria)
+        return query.resultList
+    }
+
+    /**
+     * Finds page by given path or null if not found
+     *
+     * @param path path
+     * @return page or null if not found
+     */
+    fun findByPath(path: String): Page? {
+        val entityManager = getEntityManager()
+        val criteriaBuilder = entityManager.criteriaBuilder
+        val criteria = criteriaBuilder.createQuery(Page::class.java)
+        val root = criteria.from(Page::class.java)
+
+        criteria.select(root)
+        criteria.where(criteriaBuilder.like(root.get(Page_.path), path))
+        return getSingleResult(entityManager.createQuery(criteria))
+    }
+
+    /**
      * Updates page path
      *
      * @param page page to update
@@ -94,6 +132,20 @@ class PageDAO: AbstractDAO<Page>() {
      */
     fun updatePrivate(page: Page, private: Boolean, modifierId: UUID): Page {
         page.private = private
+        page.lastModifierId = modifierId
+        return persist(page)
+    }
+
+    /**
+     * Updates page parent
+     *
+     * @param page page to update
+     * @param parent page parent
+     * @param modifierId modifiers id
+     * @return updated page
+     */
+    fun updateParent(page: Page, parent: Page?, modifierId: UUID): Page {
+        page.parent = parent
         page.lastModifierId = modifierId
         return persist(page)
     }

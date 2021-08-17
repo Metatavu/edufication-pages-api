@@ -33,7 +33,6 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     @Inject
     private lateinit var languageTranslator: LanguageTranslator
 
-
     /** LANGUAGES */
 
     override fun listLanguages(): Response {
@@ -68,9 +67,18 @@ class V1ApiImpl: V1Api, AbstractApi()  {
     override fun createPage(page: Page): Response {
         val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
 
+        val path = page.path
+        val parentPath = pagesController.getParentPath(path = path)
+        val parent = if (parentPath != null) {
+            pagesController.findPageByPath(path = parentPath) ?: return createBadRequest("Invalid path, parent not found!")
+        } else {
+            null
+        }
+
         val createdPage = pagesController.create(
             status = page.status,
-            path = page.path,
+            path = path,
+            parent = parent,
             creatorId = userId,
             contentBlocks = page.contentBlocks,
             private = page.private,
@@ -92,10 +100,19 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val userId = loggerUserId ?: return createUnauthorized(NO_VALID_USER_MESSAGE)
         val foundPage = pagesController.findPage(pageId) ?: return createNotFound("Page with id $pageId could not be found")
 
+        val path = page.path
+        val parentPath = pagesController.getParentPath(path = path)
+        val parent = if (parentPath != null) {
+            pagesController.findPageByPath(path = parentPath) ?: return createBadRequest("Invalid path, parent not found!")
+        } else {
+            null
+        }
+
         val updatedPage = pagesController.update(
             page = foundPage,
             status = page.status,
-            path = page.path,
+            path = path,
+            parent = parent,
             modifierId = userId,
             contentBlocks = page.contentBlocks,
             private = page.private,

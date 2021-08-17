@@ -14,6 +14,9 @@ class Page {
     @Column(nullable = true)
     var status: PageStatus? = null
 
+    @ManyToOne
+    var parent: Page? = null
+
     @Column(nullable = false)
     var path: String? = null
 
