@@ -13,7 +13,7 @@ import javax.inject.Inject
 class LanguagesController {
 
     @Inject
-    private lateinit var languageDAO: LanguageDAO
+    lateinit var languageDAO: LanguageDAO
 
     /**
      * Creates a new language
