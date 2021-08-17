@@ -22,13 +22,13 @@ import javax.inject.Inject
 class PagesController {
 
     @Inject
-    private lateinit var pageDAO: PageDAO
+    lateinit var pageDAO: PageDAO
 
     @Inject
-    private lateinit var contentBlockDAO: ContentBlockDAO
+    lateinit var contentBlockDAO: ContentBlockDAO
 
     @Inject
-    private lateinit var quizDAO: QuizDAO
+    lateinit var quizDAO: QuizDAO
 
     /**
      * Creates a new Page
