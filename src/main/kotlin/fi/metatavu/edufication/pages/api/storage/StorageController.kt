@@ -80,8 +80,7 @@ class StorageController {
      * AWS credentials
      */
     private val credentials: AWSStaticCredentialsProvider
-        get() =
-            AWSStaticCredentialsProvider(BasicAWSCredentials(access, secret))
+        get() = AWSStaticCredentialsProvider(BasicAWSCredentials(access, secret))
 
     /**
      * Stores a page into s3
