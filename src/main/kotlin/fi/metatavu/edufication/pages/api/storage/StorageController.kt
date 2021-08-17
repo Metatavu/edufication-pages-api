@@ -73,8 +73,8 @@ class StorageController {
     /**
      * AWS endpoint config
      */
-    private val endpointConfig: AwsClientBuilder.EndpointConfiguration get() =
-        AwsClientBuilder.EndpointConfiguration(endpoint, region)
+    private val endpointConfig: AwsClientBuilder.EndpointConfiguration
+      get() = AwsClientBuilder.EndpointConfiguration(endpoint, region)
 
     /**
      * AWS credentials
