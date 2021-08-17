@@ -11,13 +11,13 @@ import javax.inject.Inject
 class PageTranslator: AbstractTranslator<Page, fi.metatavu.edufication.pages.api.model.Page>() {
 
     @Inject
-    private lateinit var pagesController: PagesController
+    lateinit var pagesController: PagesController
 
     @Inject
-    private lateinit var storageController: StorageController
+    lateinit var storageController: StorageController
 
     @Inject
-    private lateinit var contentBlockTranslator: ContentBlockTranslator
+    lateinit var contentBlockTranslator: ContentBlockTranslator
 
     override fun translate(entity: Page): fi.metatavu.edufication.pages.api.model.Page {
         val translated = fi.metatavu.edufication.pages.api.model.Page()
