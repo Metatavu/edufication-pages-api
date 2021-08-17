@@ -70,7 +70,7 @@ class PagesTestBuilderResource(
      * @param path page path
      * @return Created page
      */
-    fun createDefaultPage(path: String): Page {
+    fun createDefaultPage(path: String, template: PageTemplate = PageTemplate.eDUFICATION): Page {
         val quiz1 = Quiz(
             text = "Onko hauki kala?",
             options = arrayOf("Ei", "Kyllä"),
@@ -99,7 +99,8 @@ class PagesTestBuilderResource(
             contentBlocks = arrayOf(pageContent1, pageContent2),
             status = PageStatus.dRAFT,
             private = true,
-            language = "fi"
+            language = "fi",
+            template = template
         )
 
         return createPage(page)
