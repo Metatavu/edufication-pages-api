@@ -1,6 +1,7 @@
 package fi.metatavu.edufication.pages.api.persistence.dao
 
 import fi.metatavu.edufication.pages.api.model.PageStatus
+import fi.metatavu.edufication.pages.api.model.PageTemplate
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import fi.metatavu.edufication.pages.api.persistence.model.Page_
 import java.util.*
@@ -19,6 +20,7 @@ class PageDAO: AbstractDAO<Page>() {
      * Creates a new Page
      *
      * @param id id
+     * @param template template
      * @param status page status
      * @param path page path
      * @param creatorId creator id
@@ -28,6 +30,7 @@ class PageDAO: AbstractDAO<Page>() {
      */
     fun create(
         id: UUID,
+        template: PageTemplate,
         status: PageStatus,
         path: String,
         creatorId: UUID,
@@ -37,6 +40,7 @@ class PageDAO: AbstractDAO<Page>() {
     ): Page {
         val result = Page()
         result.id = id
+        result.template = template
         result.path = path
         result.status = status
         result.private = private
@@ -106,6 +110,20 @@ class PageDAO: AbstractDAO<Page>() {
         criteria.select(root)
         criteria.where(criteriaBuilder.like(root.get(Page_.path), path))
         return getSingleResult(entityManager.createQuery(criteria))
+    }
+
+    /**
+     * Updates page template
+     *
+     * @param page page to update
+     * @param template template
+     * @param modifierId modifier id
+     * @return updated page
+     */
+    fun updateTemplate(page: Page, template: PageTemplate, modifierId: UUID): Page {
+        page.template = template
+        page.lastModifierId = modifierId
+        return persist(page)
     }
 
     /**
