@@ -38,6 +38,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.11.0")
     implementation("com.squareup.moshi:moshi-adapters:1.11.0")
     implementation("org.apache.commons:commons-lang3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testImplementation("com.squareup.okhttp3:okhttp")
     testImplementation("org.testcontainers:localstack:1.15.3")

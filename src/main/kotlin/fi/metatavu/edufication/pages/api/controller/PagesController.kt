@@ -2,6 +2,7 @@ package fi.metatavu.edufication.pages.api.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import fi.metatavu.edufication.pages.api.model.PageStatus
+import fi.metatavu.edufication.pages.api.model.PageTemplate
 import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.PageDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.QuizDAO
@@ -32,6 +33,7 @@ class PagesController {
     /**
      * Creates a new Page
      *
+     * @param template template
      * @param status Page status
      * @param path Path to page
      * @param parent Page parent
@@ -42,6 +44,7 @@ class PagesController {
      * @return created counter frame
      */
     fun create (
+        template: PageTemplate,
         status: PageStatus,
         path: String,
         parent: Page?,
@@ -52,6 +55,7 @@ class PagesController {
     ): Page {
         val createdPage = pageDAO.create(
             id = UUID.randomUUID(),
+            template = template,
             status = status,
             path = path,
             parent = parent,
@@ -145,6 +149,7 @@ class PagesController {
      * Updates page
      *
      * @param page page to update
+     * @param template template
      * @param status status
      * @param path page path
      * @param modifierId modifierId
@@ -155,6 +160,7 @@ class PagesController {
      */
     fun update(
       page: Page,
+      template: PageTemplate,
       status: PageStatus,
       path: String,
       modifierId: UUID,
@@ -164,6 +170,7 @@ class PagesController {
       language: String
     ): Page {
         val result = pageDAO.updatePath(page, path, modifierId)
+        pageDAO.updateTemplate(result, template, modifierId)
         pageDAO.updateLanguage(result, language, modifierId)
         pageDAO.updatePrivate(result, private, modifierId)
         pageDAO.updateParent(result, parent, modifierId)

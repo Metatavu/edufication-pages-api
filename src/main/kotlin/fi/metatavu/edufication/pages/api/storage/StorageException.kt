@@ -1,4 +1,4 @@
-package fi.metatavu.edufication.pages.api.files.storage
+package fi.metatavu.edufication.pages.api.storage
 
 /**
  * Exception for file storage operation failures
