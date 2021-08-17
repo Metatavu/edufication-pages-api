@@ -214,6 +214,68 @@ class PagesTestIT {
         }
     }
 
+    @Test
+    fun testContentBlockNavigationItems() {
+        TestBuilder().use {
+            val testPage = it.manager().pages.createDefaultPage(path = "/test")
+            val storedTestPage = getStoredPage(testPage.uri)
+
+            assertEquals(0, testPage.contentBlocks[0].navigationItems?.size)
+            assertEquals(0, storedTestPage?.contentBlocks?.get(0)?.navigationItems?.size)
+
+            val contentBlockUpdates1 = testPage.contentBlocks.copyOf()
+            contentBlockUpdates1[0] = contentBlockUpdates1[0].copy(
+                navigationItems = arrayOf(
+                    NavigationItem(
+                        title = "Item 1",
+                        url = "http://www.example.com/item1"
+                    ),
+                    NavigationItem(
+                        title = "Item 2",
+                        url = "http://www.example.com/item2"
+                    )
+                )
+            )
+
+            val updatedPage1 = it.manager().pages.updatePage(testPage.id!!, testPage.copy(
+                contentBlocks = contentBlockUpdates1
+            ))
+
+            val updatedStoredPage1 = getStoredPage(updatedPage1.uri)
+
+            assertEquals(2, updatedPage1.contentBlocks[0].navigationItems?.size)
+            assertEquals("http://www.example.com/item1", updatedPage1.contentBlocks[0].navigationItems?.get(0)?.url)
+            assertEquals("http://www.example.com/item2", updatedPage1.contentBlocks[0].navigationItems?.get(1)?.url)
+            assertEquals(2, updatedStoredPage1?.contentBlocks?.get(0)?.navigationItems?.size)
+            assertEquals("http://www.example.com/item1", updatedStoredPage1?.contentBlocks?.get(0)?.navigationItems?.get(0)?.url)
+            assertEquals("http://www.example.com/item2", updatedStoredPage1?.contentBlocks?.get(0)?.navigationItems?.get(1)?.url)
+
+            val contentBlockUpdates2 = updatedPage1.contentBlocks.copyOf()
+
+            contentBlockUpdates2[0] = contentBlockUpdates2[0].copy(
+                navigationItems = contentBlockUpdates2[0].navigationItems!!.copyOfRange(0, 1).plus(
+                    NavigationItem(
+                        title = "Item 3",
+                        url = "http://www.example.com/item3"
+                    )
+                )
+            )
+
+            val updatedPage2 = it.manager().pages.updatePage(testPage.id, testPage.copy(
+                contentBlocks = contentBlockUpdates2
+            ))
+
+            val updatedStoredPage2 = getStoredPage(updatedPage2.uri)
+
+            assertEquals(2, updatedPage2.contentBlocks[0].navigationItems?.size)
+            assertEquals("http://www.example.com/item1", updatedPage2.contentBlocks[0].navigationItems?.get(0)?.url)
+            assertEquals("http://www.example.com/item3", updatedPage2.contentBlocks[0].navigationItems?.get(1)?.url)
+
+            assertEquals(2, updatedStoredPage2?.contentBlocks?.get(0)?.navigationItems?.size)
+            assertEquals("http://www.example.com/item1", updatedStoredPage2?.contentBlocks?.get(0)?.navigationItems?.get(0)?.url)
+            assertEquals("http://www.example.com/item3",  updatedStoredPage2?.contentBlocks?.get(0)?.navigationItems?.get(1)?.url)
+        }
+    }
     /**
      * Downloads stored file from URI
      *
@@ -242,8 +304,8 @@ class PagesTestIT {
         val jsonAdapter: JsonAdapter<Page> = moshi.adapter(Page::class.java)
 
         Okio.source(data).use {
-            Okio.buffer(it).use {
-                return jsonAdapter.fromJson(it)
+            Okio.buffer(it).use { bufferedSource ->
+                return jsonAdapter.fromJson(bufferedSource)
             }
         }
     }
