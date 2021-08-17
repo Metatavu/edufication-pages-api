@@ -24,7 +24,7 @@ val moshiVersion: String by project
 
 dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
-    implementation(platform("com.amazonaws:aws-java-sdk-bom:$awsSdkVersion"))
+
     implementation("io.quarkus:quarkus-hibernate-orm")
     implementation("io.quarkus:quarkus-container-image-docker")
     implementation("io.quarkus:quarkus-hibernate-validator")
@@ -33,12 +33,16 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-jackson")
     implementation("io.quarkus:quarkus-liquibase")
     implementation("io.quarkus:quarkus-jdbc-mysql")
+    implementation("io.quarkus:quarkus-amazon-s3")
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
-    implementation("com.amazonaws:aws-java-sdk-s3")
     implementation("org.apache.commons:commons-lang3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("software.amazon.awssdk:url-connection-client")
 
+    testImplementation(platform("com.amazonaws:aws-java-sdk-bom:$awsSdkVersion"))
+    testImplementation("com.amazonaws:aws-java-sdk-s3")
     testImplementation("com.squareup.okhttp3:okhttp")
     testImplementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     testImplementation("com.squareup.moshi:moshi-adapters:$moshiVersion")

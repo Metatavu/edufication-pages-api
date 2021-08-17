@@ -1,15 +1,5 @@
 package fi.metatavu.edufication.pages.api.storage
 
-import com.amazonaws.SdkClientException
-import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.amazonaws.services.s3.model.AmazonS3Exception
-import com.amazonaws.services.s3.model.CannedAccessControlList
-import com.amazonaws.services.s3.model.ObjectMetadata
-import com.amazonaws.services.s3.model.PutObjectRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -17,35 +7,25 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import fi.metatavu.edufication.pages.api.model.Page
 import fi.metatavu.edufication.pages.api.model.PageTemplate
 import org.eclipse.microprofile.config.inject.ConfigProperty
+import software.amazon.awssdk.core.sync.RequestBody
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.*
 import java.io.ByteArrayInputStream
-import java.io.IOException
 import java.io.InputStream
 import java.net.URL
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
+
 @ApplicationScoped
 class StorageController {
 
     @Inject
-    @ConfigProperty(name = "s3.endpoint")
-    private lateinit var endpoint: String
-
-    @Inject
-    @ConfigProperty(name = "s3.region")
-    private lateinit var region: String
+    lateinit var s3: S3Client
 
     @Inject
     @ConfigProperty(name = "s3.bucket")
-    private lateinit var bucket: String
-
-    @Inject
-    @ConfigProperty(name = "s3.secret")
-    private lateinit var secret: String
-
-    @Inject
-    @ConfigProperty(name = "s3.access")
-    private lateinit var access: String
+    lateinit var bucket: String
 
     /**
      * Object mapper
@@ -58,30 +38,6 @@ class StorageController {
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             return objectMapper
         }
-
-    /**
-     * Returns S3 client
-     */
-    private val client: AmazonS3
-        get() = AmazonS3ClientBuilder
-            .standard()
-            .withPathStyleAccessEnabled(true)
-            .withCredentials(credentials)
-            .withEndpointConfiguration(endpointConfig)
-            .build()
-
-    /**
-     * AWS endpoint config
-     */
-    private val endpointConfig: AwsClientBuilder.EndpointConfiguration get() =
-        AwsClientBuilder.EndpointConfiguration(endpoint, region)
-
-    /**
-     * AWS credentials
-     */
-    private val credentials: AWSStaticCredentialsProvider
-        get() =
-            AWSStaticCredentialsProvider(BasicAWSCredentials(access, secret))
 
     /**
      * Stores a page into s3
@@ -181,19 +137,19 @@ class StorageController {
      * @return uploaded object
      */
     private fun uploadObject(key: String, contentType: String, contentLength: Long, data: InputStream): URL {
-        val objectMeta = ObjectMetadata()
-        objectMeta.contentType = contentType
+        return try {
+            val request = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType(contentType)
+                .contentLength(contentLength)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build()
 
-        try {
-            try {
-                objectMeta.contentLength = contentLength
-                val obj = PutObjectRequest(bucket, key, data, objectMeta).withCannedAcl(CannedAccessControlList.PublicRead)
-                client.putObject(obj)
-                return client.getUrl(bucket, key)
-            } catch (e: SdkClientException) {
-                throw FileStorageException(e)
-            }
-        } catch (e: IOException) {
+            s3.putObject(request, RequestBody.fromInputStream(data, contentLength))
+
+            getObjectFullPath(key = key)
+        } catch (e: Exception) {
             throw FileStorageException(e)
         }
     }
@@ -204,11 +160,16 @@ class StorageController {
      * @param key object key
      * @return uploaded object
      */
-    private fun getObjectFullPath(key: String): URL? {
+    private fun getObjectFullPath(key: String): URL {
         return try {
-            client.getUrl(bucket, key)
-        } catch (e: AmazonS3Exception) {
-            null
+            val request = GetUrlRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build()
+
+            s3.utilities().getUrl(request)
+        } catch (e: Exception) {
+            throw FileStorageException(e)
         }
     }
 
@@ -219,10 +180,12 @@ class StorageController {
      */
     private fun deleteObject(key: String) {
         try {
-            val s3Object = client.getObject(bucket, key)
-            if (s3Object != null) {
-                client.deleteObject(bucket, key)
-            }
+            val request = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build()
+
+            s3.deleteObject(request)
         } catch (e: Exception) {
             throw FileStorageException(e)
         }
