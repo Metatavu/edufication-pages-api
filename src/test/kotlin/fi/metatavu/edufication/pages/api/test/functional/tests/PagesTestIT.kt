@@ -241,9 +241,11 @@ class PagesTestIT {
 
         val jsonAdapter: JsonAdapter<Page> = moshi.adapter(Page::class.java)
 
-        return Okio.source(data)
-            .use(Okio::buffer)
-            .use(jsonAdapter::fromJson)
+        Okio.source(data).use {
+            Okio.buffer(it).use {
+                return jsonAdapter.fromJson(it)
+            }
+        }
     }
 
     /**
