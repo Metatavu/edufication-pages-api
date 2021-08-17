@@ -1,7 +1,7 @@
 package fi.metatavu.edufication.pages.api.impl
 
 import fi.metatavu.edufication.pages.api.controller.LanguagesController
-import fi.metatavu.edufication.pages.api.controller.PagesController
+import fi.metatavu.edufication.pages.api.pages.PagesController
 import fi.metatavu.edufication.pages.api.impl.translate.LanguageTranslator
 import fi.metatavu.edufication.pages.api.impl.translate.PageTranslator
 import fi.metatavu.edufication.pages.api.model.Language

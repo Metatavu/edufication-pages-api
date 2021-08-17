@@ -1,6 +1,6 @@
 package fi.metatavu.edufication.pages.api.impl.translate
 
-import fi.metatavu.edufication.pages.api.controller.PagesController
+import fi.metatavu.edufication.pages.api.pages.PagesController
 import fi.metatavu.edufication.pages.api.model.PageReference
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import fi.metatavu.edufication.pages.api.storage.StorageController
