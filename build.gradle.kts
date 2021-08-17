@@ -20,6 +20,7 @@ val jaxrsFunctionalTestBuilderVersion: String by project
 val testContainersVersion: String by project
 val testContainersKeycloakVersion: String by project
 val awsSdkVersion: String by project
+val moshiVersion: String by project
 
 dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
@@ -35,12 +36,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
     implementation("com.amazonaws:aws-java-sdk-s3")
-    implementation("com.squareup.moshi:moshi-kotlin:1.11.0")
-    implementation("com.squareup.moshi:moshi-adapters:1.11.0")
     implementation("org.apache.commons:commons-lang3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testImplementation("com.squareup.okhttp3:okhttp")
+    testImplementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
+    testImplementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
     testImplementation("org.testcontainers:localstack:1.15.3")
     testImplementation("fi.metatavu.jaxrs.testbuilder:jaxrs-functional-test-builder:$jaxrsFunctionalTestBuilderVersion")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")

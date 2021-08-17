@@ -4,8 +4,8 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import fi.metatavu.edufication.pages.api.client.models.*
-import fi.metatavu.edufication.pages.api.controller.adapters.OffsetDateTimeAdapter
-import fi.metatavu.edufication.pages.api.controller.adapters.UUIDJsonAdapter
+import fi.metatavu.edufication.pages.api.test.common.moshi.adapters.OffsetDateTimeAdapter
+import fi.metatavu.edufication.pages.api.test.common.moshi.adapters.UUIDJsonAdapter
 import fi.metatavu.edufication.pages.api.test.functional.TestBuilder
 import fi.metatavu.edufication.pages.api.test.functional.resources.KeycloakTestResource
 import fi.metatavu.edufication.pages.api.test.functional.resources.LocalTestProfile
