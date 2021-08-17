@@ -71,6 +71,7 @@ allOpen {
     annotation("javax.enterprise.context.ApplicationScoped")
     annotation("javax.enterprise.context.RequestScoped")
     annotation("io.quarkus.test.junit.QuarkusTest")
+    annotation("javax.persistence.Entity")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -89,6 +90,7 @@ val generateApiSpec = tasks.register("generateApiSpec",GenerateTask::class){
     this.configOptions.put("interfaceOnly", "true")
     this.configOptions.put("returnResponse", "true")
     this.configOptions.put("useSwaggerAnnotations", "false")
+    this.configOptions.put("additionalModelTypeAnnotations", "@io.quarkus.runtime.annotations.RegisterForReflection")
 }
 
 val generateApiClient = tasks.register("generateApiClient",GenerateTask::class){
