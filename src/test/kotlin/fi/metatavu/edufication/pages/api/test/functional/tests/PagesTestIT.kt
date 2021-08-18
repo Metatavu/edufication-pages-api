@@ -138,7 +138,7 @@ class PagesTestIT {
     @Test
     fun updatePage() {
         TestBuilder().use {
-            val createdPage = it.manager().pages.createDefaultPage("path1", title = "Title")
+            val createdPage = it.manager().pages.createDefaultPage("path1", title = "title")
             assertNotNull(createdPage)
 
             assertEquals(PageTemplate.eDUFICATION, createdPage.template)
