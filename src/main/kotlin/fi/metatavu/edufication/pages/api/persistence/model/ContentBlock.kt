@@ -4,7 +4,9 @@ import fi.metatavu.edufication.pages.api.model.ContentBlockLayout
 import java.util.*
 import javax.persistence.*
 
-
+/**
+ * JPA entity for page content block
+ */
 @Entity
 class ContentBlock {
 

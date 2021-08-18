@@ -146,4 +146,27 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="content_block_navigation_items" author="antti.leppa">
+        <createTable tableName="contentblocknavigationitem">
+            <column name="id" type="binary(16)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(192)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="url" type="text">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="orderNumber" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="contentblock_id" type="binary(16)">
+                <constraints nullable="false" foreignKeyName="FK_CONTENT_BLOCK_NAV_ITEM_CONTENT_BLOCK" referencedColumnNames="id" referencedTableName="contentblock"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

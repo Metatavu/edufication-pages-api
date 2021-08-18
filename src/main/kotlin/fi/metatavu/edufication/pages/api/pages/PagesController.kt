@@ -1,9 +1,11 @@
-package fi.metatavu.edufication.pages.api.controller
+package fi.metatavu.edufication.pages.api.pages
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import fi.metatavu.edufication.pages.api.model.NavigationItem
 import fi.metatavu.edufication.pages.api.model.PageStatus
 import fi.metatavu.edufication.pages.api.model.PageTemplate
 import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockDAO
+import fi.metatavu.edufication.pages.api.persistence.dao.ContentBlockNavigationItemDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.PageDAO
 import fi.metatavu.edufication.pages.api.persistence.dao.QuizDAO
 import fi.metatavu.edufication.pages.api.persistence.model.ContentBlock
@@ -29,6 +31,9 @@ class PagesController {
 
     @Inject
     lateinit var quizDAO: QuizDAO
+
+    @Inject
+    lateinit var contentBlockNavigationItemDAO: ContentBlockNavigationItemDAO
 
     /**
      * Creates a new Page
@@ -85,6 +90,11 @@ class PagesController {
                 )
                 contentBlockDAO.updateQuiz(contentBlock, quiz)
             }
+
+            setContentBlockNavigationItems(
+                contentBlock = contentBlock,
+                items = it.navigationItems
+            )
         }
 
         return createdPage
@@ -176,9 +186,7 @@ class PagesController {
         pageDAO.updateParent(result, parent, modifierId)
         pageDAO.updateStatus(result, status, modifierId)
 
-        contentBlockDAO.listByPage(result).forEach {
-            contentBlockDAO.delete(it)
-        }
+        contentBlockDAO.listByPage(result).forEach(this::deleteContentBlock)
 
         contentBlocks.map {
             val contentBlock = contentBlockDAO.create(
@@ -191,6 +199,7 @@ class PagesController {
                 link = getDataAsString(it.link),
                 orderInPage = it.orderInPage
             )
+
             if (it.quiz != null) {
                 val quiz = quizDAO.create(
                     UUID.randomUUID(),
@@ -201,6 +210,11 @@ class PagesController {
                 )
                 contentBlockDAO.updateQuiz(contentBlock, quiz)
             }
+
+            setContentBlockNavigationItems(
+                contentBlock = contentBlock,
+                items = it.navigationItems
+            )
         }
 
         return result
@@ -212,11 +226,8 @@ class PagesController {
      * @param page page to delete
      */
     fun deletePage(page: Page) {
-        contentBlockDAO.listByPage(page).forEach {
-            contentBlockDAO.delete(it)
-        }
-
-        return pageDAO.delete(page)
+        contentBlockDAO.listByPage(page).forEach(this::deleteContentBlock)
+        pageDAO.delete(page)
     }
 
     /**
@@ -229,6 +240,57 @@ class PagesController {
         return contentBlockDAO.listByPage(page)
     }
 
+    /**
+     * Deletes a content block
+     *
+     * @param contentBlock content block
+     */
+    private fun deleteContentBlock(contentBlock: ContentBlock) {
+        contentBlockNavigationItemDAO.listByContentBlock(contentBlock).forEach(contentBlockNavigationItemDAO::delete)
+        contentBlockDAO.delete(contentBlock)
+    }
+
+    /**
+     * Sets content block navigation items
+     *
+     * @param contentBlock content block
+     * @param items navigation items
+     */
+    private fun setContentBlockNavigationItems(contentBlock: ContentBlock, items: List<NavigationItem>) {
+        val existingItems = contentBlockNavigationItemDAO.listByContentBlock(contentBlock).toMutableList()
+
+        items.forEachIndexed { index, item ->
+            val existingItem = existingItems.find { it.id == item.id }
+            if (existingItem == null) {
+                contentBlockNavigationItemDAO.create(
+                    id = UUID.randomUUID(),
+                    orderNumber = index,
+                    url = item.url,
+                    title = item.title,
+                    contentBlock = contentBlock
+                )
+            } else {
+                contentBlockNavigationItemDAO.updateUrl(
+                    contentBlockNavigationItem = existingItem,
+                    url = item.url
+                )
+
+                contentBlockNavigationItemDAO.updateTitle(
+                    contentBlockNavigationItem = existingItem,
+                    title = item.title
+                )
+
+                contentBlockNavigationItemDAO.updateOrderNumber(
+                    contentBlockNavigationItem = existingItem,
+                    orderNumber = index
+                )
+
+                existingItems.remove(existingItem)
+            }
+        }
+
+        existingItems.forEach(contentBlockNavigationItemDAO::delete)
+    }
 
     /**
      * Serializes the object into JSON string
