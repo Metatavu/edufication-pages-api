@@ -68,9 +68,11 @@ class PagesTestBuilderResource(
      * Creates a page with default values
      *
      * @param path page path
+     * @param template template
+     * @param title title
      * @return Created page
      */
-    fun createDefaultPage(path: String, template: PageTemplate = PageTemplate.eDUFICATION): Page {
+    fun createDefaultPage(path: String, template: PageTemplate = PageTemplate.eDUFICATION, title: String? = null): Page {
         val quiz1 = Quiz(
             text = "Onko hauki kala?",
             options = arrayOf("Ei", "Kyllä"),
@@ -95,6 +97,7 @@ class PagesTestBuilderResource(
         )
 
         val page = Page(
+            title = title,
             path = path,
             contentBlocks = arrayOf(pageContent1, pageContent2),
             status = PageStatus.dRAFT,

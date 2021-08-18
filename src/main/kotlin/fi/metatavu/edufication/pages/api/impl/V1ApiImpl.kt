@@ -76,6 +76,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         }
 
         val createdPage = pagesController.create(
+            title = page.title,
             template = page.template,
             status = page.status,
             path = path,
@@ -115,6 +116,7 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         }
 
         val updatedPage = pagesController.update(
+            title = page.title,
             template = page.template,
             page = foundPage,
             status = page.status,

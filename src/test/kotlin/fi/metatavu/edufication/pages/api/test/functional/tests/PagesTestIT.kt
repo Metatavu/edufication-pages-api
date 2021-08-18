@@ -138,10 +138,11 @@ class PagesTestIT {
     @Test
     fun updatePage() {
         TestBuilder().use {
-            val createdPage = it.manager().pages.createDefaultPage("path1")
+            val createdPage = it.manager().pages.createDefaultPage("path1", title = "Title")
             assertNotNull(createdPage)
 
             assertEquals(PageTemplate.eDUFICATION, createdPage.template)
+            assertEquals("title", createdPage.title)
 
             val updatedContent = ContentBlock(
                 title = "Title 123123",
@@ -156,6 +157,7 @@ class PagesTestIT {
             )
 
             val updatedPage = createdPage.copy(
+                title = "updated title",
                 status = PageStatus.pUBLIC,
                 template = PageTemplate.rOBOCOAST,
                 uri = "",
@@ -166,6 +168,7 @@ class PagesTestIT {
             )
 
             val update = it.manager().pages.updatePage(createdPage.id!!, updatedPage)
+            assertEquals(updatedPage.title, update.title)
             assertEquals(updatedPage.template, update.template)
             assertEquals(updatedPage.status, update.status)
             assertEquals(updatedPage.path, update.path)

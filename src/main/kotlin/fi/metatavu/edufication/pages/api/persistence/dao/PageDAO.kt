@@ -20,6 +20,7 @@ class PageDAO: AbstractDAO<Page>() {
      * Creates a new Page
      *
      * @param id id
+     * @param title title
      * @param template template
      * @param status page status
      * @param path page path
@@ -30,6 +31,7 @@ class PageDAO: AbstractDAO<Page>() {
      */
     fun create(
         id: UUID,
+        title: String?,
         template: PageTemplate,
         status: PageStatus,
         path: String,
@@ -40,6 +42,7 @@ class PageDAO: AbstractDAO<Page>() {
     ): Page {
         val result = Page()
         result.id = id
+        result.title = title
         result.template = template
         result.path = path
         result.status = status
@@ -110,6 +113,20 @@ class PageDAO: AbstractDAO<Page>() {
         criteria.select(root)
         criteria.where(criteriaBuilder.like(root.get(Page_.path), path))
         return getSingleResult(entityManager.createQuery(criteria))
+    }
+
+    /**
+     * Updates page title
+     *
+     * @param page page to update
+     * @param title title
+     * @param modifierId modifier id
+     * @return updated page
+     */
+    fun updateTitle(page: Page, title: String?, modifierId: UUID): Page {
+        page.title = title
+        page.lastModifierId = modifierId
+        return persist(page)
     }
 
     /**
