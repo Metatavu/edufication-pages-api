@@ -22,6 +22,7 @@ class PageTranslator: AbstractTranslator<Page, fi.metatavu.edufication.pages.api
     override fun translate(entity: Page): fi.metatavu.edufication.pages.api.model.Page {
         val translated = fi.metatavu.edufication.pages.api.model.Page()
         translated.id = entity.id
+        translated.title = entity.title
         translated.template = entity.template
         translated.contentBlocks = contentBlockTranslator.translate(pagesController.getPageContent(entity)).sortedBy { it.orderInPage }
         translated.createdAt = entity.createdAt
