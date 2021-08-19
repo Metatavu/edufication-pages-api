@@ -15,6 +15,8 @@ class Page {
     @Column(nullable = true)
     var status: PageStatus? = null
 
+    var title: String? = null
+
     @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     var template: PageTemplate? = null

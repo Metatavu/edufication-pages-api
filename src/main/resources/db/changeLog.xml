@@ -169,4 +169,10 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="page_title" author="antti.leppa">
+        <addColumn tableName="page">
+            <column name="title" type="VARCHAR(192)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

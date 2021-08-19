@@ -38,6 +38,7 @@ class PagesController {
     /**
      * Creates a new Page
      *
+     * @param title title
      * @param template template
      * @param status Page status
      * @param path Path to page
@@ -49,6 +50,7 @@ class PagesController {
      * @return created counter frame
      */
     fun create (
+        title: String?,
         template: PageTemplate,
         status: PageStatus,
         path: String,
@@ -60,6 +62,7 @@ class PagesController {
     ): Page {
         val createdPage = pageDAO.create(
             id = UUID.randomUUID(),
+            title = title,
             template = template,
             status = status,
             path = path,
@@ -159,6 +162,7 @@ class PagesController {
      * Updates page
      *
      * @param page page to update
+     * @param title title
      * @param template template
      * @param status status
      * @param path page path
@@ -170,6 +174,7 @@ class PagesController {
      */
     fun update(
       page: Page,
+      title: String?,
       template: PageTemplate,
       status: PageStatus,
       path: String,
@@ -181,6 +186,7 @@ class PagesController {
     ): Page {
         val result = pageDAO.updatePath(page, path, modifierId)
         pageDAO.updateTemplate(result, template, modifierId)
+        pageDAO.updateTitle(result, title, modifierId)
         pageDAO.updateLanguage(result, language, modifierId)
         pageDAO.updatePrivate(result, private, modifierId)
         pageDAO.updateParent(result, parent, modifierId)
