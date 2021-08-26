@@ -175,4 +175,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="content_block_navigation_items_image_url" author="jari.nykanen">
+        <addColumn tableName="contentblocknavigationitem">
+            <column name="imageUrl" type="text"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

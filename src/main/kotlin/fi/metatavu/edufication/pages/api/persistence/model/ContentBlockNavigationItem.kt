@@ -22,6 +22,9 @@ class ContentBlockNavigationItem {
     var url: String? = null
 
     @Column(nullable = true)
+    var imageUrl: String? = null
+
+    @Column(nullable = true)
     var orderNumber: Int? = null
 
 }

@@ -272,6 +272,7 @@ class PagesController {
                     id = UUID.randomUUID(),
                     orderNumber = index,
                     url = item.url,
+                    imageUrl = item.imageUrl,
                     title = item.title,
                     contentBlock = contentBlock
                 )
@@ -279,6 +280,11 @@ class PagesController {
                 contentBlockNavigationItemDAO.updateUrl(
                     contentBlockNavigationItem = existingItem,
                     url = item.url
+                )
+
+                contentBlockNavigationItemDAO.updateImageUrl(
+                    contentBlockNavigationItem = existingItem,
+                    imageUrl = item.imageUrl
                 )
 
                 contentBlockNavigationItemDAO.updateTitle(
