@@ -18,15 +18,17 @@ class ContentBlockNavigationItemDAO: AbstractDAO<ContentBlockNavigationItem>() {
      * @param contentBlock contentBlock
      * @param orderNumber order number
      * @param title title
-     * @param url url
+     * @param url URL
+     * @param imageUrl image URL
      * @return created content block navigation item
      */
-    fun create(id: UUID, contentBlock: ContentBlock, orderNumber: Int, title: String, url: String): ContentBlockNavigationItem {
+    fun create(id: UUID, contentBlock: ContentBlock, orderNumber: Int, title: String, url: String, imageUrl: String?): ContentBlockNavigationItem {
         val result = ContentBlockNavigationItem()
         result.id = id
         result.contentBlock = contentBlock
         result.title = title
         result.url = url
+        result.imageUrl = imageUrl
         result.orderNumber = orderNumber
         return persist(result)
     }
@@ -76,6 +78,18 @@ class ContentBlockNavigationItemDAO: AbstractDAO<ContentBlockNavigationItem>() {
      */
     fun updateUrl(contentBlockNavigationItem: ContentBlockNavigationItem, url: String): ContentBlockNavigationItem {
         contentBlockNavigationItem.url = url
+        return persist(contentBlockNavigationItem)
+    }
+
+    /**
+     * Updates content block navigation item image URL
+     *
+     * @param contentBlockNavigationItem content block navigation item
+     * @param imageUrl URL
+     * @return updated content block navigation item
+     */
+    fun updateImageUrl(contentBlockNavigationItem: ContentBlockNavigationItem, imageUrl: String?): ContentBlockNavigationItem {
+        contentBlockNavigationItem.imageUrl = imageUrl
         return persist(contentBlockNavigationItem)
     }
 
