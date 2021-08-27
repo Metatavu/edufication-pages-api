@@ -61,6 +61,7 @@ class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufi
         result.id = navigationItem.id
         result.title = navigationItem.title
         result.url = navigationItem.url
+        result.imageUrl = navigationItem.imageUrl
         return result
     }
 
