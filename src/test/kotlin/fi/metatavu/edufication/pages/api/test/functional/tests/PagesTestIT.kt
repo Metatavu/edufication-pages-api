@@ -53,7 +53,52 @@ class PagesTestIT {
             val listWithTwoEntries = it.manager().pages.listPages(null)
             assertEquals(2, listWithTwoEntries.size)
 
-            it.manager().pages.deletePage(firstPage.id!!)
+            val quiz1 = Quiz(
+                text = "Onko hauki kala?",
+                options = arrayOf("Ei", "Kyllä"),
+                correctIndex = 1
+            )
+
+            val pageContent1 = ContentBlock (
+                textContent = "Lorem ipsum dolor sit amet",
+                link = Link(
+                    title = "title 1",
+                    url = "www.kissa.com",
+                ),
+                layout = ContentBlockLayout.mEDIALEFT,
+                title = "Tämä on sivuston sisältöä",
+                orderInPage = 0,
+                quiz = quiz1
+            )
+
+            val pageContent2 = ContentBlock (
+                layout = ContentBlockLayout.mEDIALEFTARTICLE,
+                orderInPage = 1
+            )
+
+            val pageReference = PageReference(
+                path = firstPage.path,
+                id = firstPage.id,
+                uri = firstPage.uri
+            )
+
+            val page = Page(
+                title = null,
+                path = "path1/path3",
+                contentBlocks = arrayOf(pageContent1, pageContent2),
+                status = PageStatus.dRAFT,
+                private = true,
+                language = "fi",
+                template = PageTemplate.eDUFICATION,
+                parentPage = pageReference
+            )
+
+            val pageWIthParent = it.manager().pages.createPage(page)
+            val listWithParentFilter = it.manager().pages.listPages(parentPageId = firstPage.id!!)
+            assertEquals(1, listWithParentFilter.size)
+
+            it.manager().pages.deletePage(pageWIthParent.id!!)
+            it.manager().pages.deletePage(firstPage.id)
             it.manager().pages.deletePage(secondPage.id!!)
 
             val emptyListAfterDelete = it.manager().pages.listPages(null)

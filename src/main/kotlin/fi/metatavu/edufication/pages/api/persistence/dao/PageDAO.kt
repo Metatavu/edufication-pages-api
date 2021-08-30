@@ -57,10 +57,10 @@ class PageDAO: AbstractDAO<Page>() {
     /**
      * Lists all pages with given filters
      *
-     * @param path path
+     * @param parentPage parent page
      * @return list of pages
      */
-    fun list(path: String?): List<Page> {
+    fun list(parentPage: Page?): List<Page> {
         val entityManager = getEntityManager()
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteria = criteriaBuilder.createQuery(Page::class.java)
@@ -69,8 +69,8 @@ class PageDAO: AbstractDAO<Page>() {
         criteria.select(root)
         val restrictions = ArrayList<Predicate>()
 
-        if (path != null) {
-            restrictions.add(criteriaBuilder.like(root.get(Page_.path), "%$path%" ))
+        if (parentPage != null) {
+            restrictions.add(criteriaBuilder.equal(root.get(Page_.parent), parentPage ))
         }
 
         criteria.where(criteriaBuilder.and(*restrictions.toTypedArray()))

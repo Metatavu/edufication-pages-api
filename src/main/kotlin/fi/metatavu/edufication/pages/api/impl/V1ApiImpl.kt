@@ -59,8 +59,13 @@ class V1ApiImpl: V1Api, AbstractApi()  {
 
     /** PAGES */
 
-    override fun listPages(path: String?): Response {
-        val pages = pagesController.list(path)
+    override fun listPages(parentPageId: UUID?): Response {
+        var parentPage: fi.metatavu.edufication.pages.api.persistence.model.Page? = null
+        if (parentPageId != null) {
+            parentPage = pagesController.findPage(pageId = parentPageId) ?: return createNotFound("Page with ID $parentPageId could not be found!")
+        }
+
+        val pages = pagesController.list(parentPage)
         return createOk(pages.map(pageTranslator::translate))
     }
 
