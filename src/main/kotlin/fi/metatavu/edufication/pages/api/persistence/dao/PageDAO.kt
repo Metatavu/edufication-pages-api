@@ -1,6 +1,7 @@
 package fi.metatavu.edufication.pages.api.persistence.dao
 
 import fi.metatavu.edufication.pages.api.model.PageStatus
+import fi.metatavu.edufication.pages.api.model.PageTemplate
 import fi.metatavu.edufication.pages.api.persistence.model.Page
 import fi.metatavu.edufication.pages.api.persistence.model.Page_
 import java.util.*
@@ -19,6 +20,8 @@ class PageDAO: AbstractDAO<Page>() {
      * Creates a new Page
      *
      * @param id id
+     * @param title title
+     * @param template template
      * @param status page status
      * @param path page path
      * @param creatorId creator id
@@ -28,17 +31,23 @@ class PageDAO: AbstractDAO<Page>() {
      */
     fun create(
         id: UUID,
+        title: String?,
+        template: PageTemplate,
         status: PageStatus,
         path: String,
         creatorId: UUID,
         private: Boolean,
+        parent: Page?,
         language: String
     ): Page {
         val result = Page()
         result.id = id
+        result.title = title
+        result.template = template
         result.path = path
         result.status = status
         result.private = private
+        result.parent = parent
         result.creatorId = creatorId
         result.lastModifierId = creatorId
         result.language = language
@@ -48,10 +57,10 @@ class PageDAO: AbstractDAO<Page>() {
     /**
      * Lists all pages with given filters
      *
-     * @param path path
+     * @param parentPage parent page
      * @return list of pages
      */
-    fun list(path: String?): List<Page> {
+    fun list(parentPage: Page?): List<Page> {
         val entityManager = getEntityManager()
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteria = criteriaBuilder.createQuery(Page::class.java)
@@ -60,14 +69,78 @@ class PageDAO: AbstractDAO<Page>() {
         criteria.select(root)
         val restrictions = ArrayList<Predicate>()
 
-        if (path != null) {
-            restrictions.add(criteriaBuilder.like(root.get(Page_.path), "%$path%" ))
+        if (parentPage != null) {
+            restrictions.add(criteriaBuilder.equal(root.get(Page_.parent), parentPage ))
         }
 
         criteria.where(criteriaBuilder.and(*restrictions.toTypedArray()))
 
         val query = entityManager.createQuery(criteria)
         return query.resultList
+    }
+
+    /**
+     * Lists child pages
+     *
+     * @param parent parent page
+     * @return list of child pages
+     */
+    fun listByParent(parent: Page): List<Page> {
+        val entityManager = getEntityManager()
+        val criteriaBuilder = entityManager.criteriaBuilder
+        val criteria = criteriaBuilder.createQuery(Page::class.java)
+        val root = criteria.from(Page::class.java)
+
+        criteria.select(root)
+        criteria.where(criteriaBuilder.equal(root.get(Page_.parent), parent))
+
+        val query = entityManager.createQuery(criteria)
+        return query.resultList
+    }
+
+    /**
+     * Finds page by given path or null if not found
+     *
+     * @param path path
+     * @return page or null if not found
+     */
+    fun findByPath(path: String): Page? {
+        val entityManager = getEntityManager()
+        val criteriaBuilder = entityManager.criteriaBuilder
+        val criteria = criteriaBuilder.createQuery(Page::class.java)
+        val root = criteria.from(Page::class.java)
+
+        criteria.select(root)
+        criteria.where(criteriaBuilder.like(root.get(Page_.path), path))
+        return getSingleResult(entityManager.createQuery(criteria))
+    }
+
+    /**
+     * Updates page title
+     *
+     * @param page page to update
+     * @param title title
+     * @param modifierId modifier id
+     * @return updated page
+     */
+    fun updateTitle(page: Page, title: String?, modifierId: UUID): Page {
+        page.title = title
+        page.lastModifierId = modifierId
+        return persist(page)
+    }
+
+    /**
+     * Updates page template
+     *
+     * @param page page to update
+     * @param template template
+     * @param modifierId modifier id
+     * @return updated page
+     */
+    fun updateTemplate(page: Page, template: PageTemplate, modifierId: UUID): Page {
+        page.template = template
+        page.lastModifierId = modifierId
+        return persist(page)
     }
 
     /**
@@ -94,6 +167,20 @@ class PageDAO: AbstractDAO<Page>() {
      */
     fun updatePrivate(page: Page, private: Boolean, modifierId: UUID): Page {
         page.private = private
+        page.lastModifierId = modifierId
+        return persist(page)
+    }
+
+    /**
+     * Updates page parent
+     *
+     * @param page page to update
+     * @param parent page parent
+     * @param modifierId modifiers id
+     * @return updated page
+     */
+    fun updateParent(page: Page, parent: Page?, modifierId: UUID): Page {
+        page.parent = parent
         page.lastModifierId = modifierId
         return persist(page)
     }

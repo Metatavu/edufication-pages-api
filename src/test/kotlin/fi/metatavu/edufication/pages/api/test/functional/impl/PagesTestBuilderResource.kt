@@ -30,11 +30,11 @@ class PagesTestBuilderResource(
     /**
      * Lists pages
      *
-     * @param path filter by path
+     * @param parentPageId filter by parent page ID
      * @return list of pages
      */
-    fun listPages(path: String?): Array<Page> {
-        return api.listPages(path)
+    fun listPages(parentPageId: UUID?): Array<Page> {
+        return api.listPages(parentPageId)
     }
 
     /**
@@ -68,9 +68,11 @@ class PagesTestBuilderResource(
      * Creates a page with default values
      *
      * @param path page path
+     * @param template template
+     * @param title title
      * @return Created page
      */
-    fun createDefaultPage(path: String): Page {
+    fun createDefaultPage(path: String, template: PageTemplate = PageTemplate.eDUFICATION, title: String? = null): Page {
         val quiz1 = Quiz(
             text = "Onko hauki kala?",
             options = arrayOf("Ei", "Kyllä"),
@@ -95,11 +97,13 @@ class PagesTestBuilderResource(
         )
 
         val page = Page(
+            title = title,
             path = path,
             contentBlocks = arrayOf(pageContent1, pageContent2),
             status = PageStatus.dRAFT,
             private = true,
-            language = "fi"
+            language = "fi",
+            template = template
         )
 
         return createPage(page)
@@ -111,7 +115,7 @@ class PagesTestBuilderResource(
      * @param page page to create
      * @return created page
      */
-    private fun createPage(page: Page): Page {
+    fun createPage(page: Page): Page {
         val createdPage = api.createPage(page = page)
         addClosable(createdPage)
         return createdPage

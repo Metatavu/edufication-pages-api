@@ -6,9 +6,10 @@ import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.utility.DockerImageName
 
 /**
- * Class for Keycloak test resource.
+ * Class for S3 test resource.
  *
  * @author Antti Leinonen
+ * @author Antti Leppä
  */
 class S3TestResource: QuarkusTestResourceLifecycleManager {
 
@@ -20,14 +21,13 @@ class S3TestResource: QuarkusTestResourceLifecycleManager {
         val endpointConf = localstack.getEndpointConfiguration(LocalStackContainer.Service.S3)
         val credentials = localstack.defaultCredentialsProvider
 
-        config["s3.region"] = endpointConf.signingRegion
+        config["quarkus.s3.endpoint-override"] = endpointConf.serviceEndpoint
+        config["quarkus.s3.aws.region"] = endpointConf.signingRegion
+        config["quarkus.s3.aws.credentials.type"] = "static"
+        config["quarkus.s3.aws.credentials.static-provider.access-key-id"] = credentials.credentials.awsAccessKeyId
+        config["quarkus.s3.aws.credentials.static-provider.secret-access-key"] = credentials.credentials.awsSecretKey
         config["s3.bucket"] = "edufication"
         config["s3.prefix"] = "files"
-
-        config["s3.access"] = credentials.credentials.awsAccessKeyId
-        config["s3.secret"] = credentials.credentials.awsSecretKey
-
-        config["s3.endpoint"] = endpointConf.serviceEndpoint
 
         val client = AmazonS3ClientBuilder
             .standard()
