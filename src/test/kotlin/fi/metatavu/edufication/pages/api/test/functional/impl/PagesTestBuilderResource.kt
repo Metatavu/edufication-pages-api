@@ -30,11 +30,11 @@ class PagesTestBuilderResource(
     /**
      * Lists pages
      *
-     * @param path filter by path
+     * @param parentPageId filter by parent page ID
      * @return list of pages
      */
-    fun listPages(path: String?): Array<Page> {
-        return api.listPages(path)
+    fun listPages(parentPageId: UUID?): Array<Page> {
+        return api.listPages(parentPageId)
     }
 
     /**
@@ -115,7 +115,7 @@ class PagesTestBuilderResource(
      * @param page page to create
      * @return created page
      */
-    private fun createPage(page: Page): Page {
+    fun createPage(page: Page): Page {
         val createdPage = api.createPage(page = page)
         addClosable(createdPage)
         return createdPage

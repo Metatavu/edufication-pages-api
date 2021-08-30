@@ -126,11 +126,11 @@ class PagesController {
     /**
      * List pages with optional path filter
      *
-     * @param path path that must be contained in page path
+     * @param parentPage parent page
      * @return list of pages
      */
-    fun list(path: String?): List<Page> {
-        return pageDAO.list(path)
+    fun list(parentPage: Page?): List<Page> {
+        return pageDAO.list(parentPage)
     }
 
     /**
