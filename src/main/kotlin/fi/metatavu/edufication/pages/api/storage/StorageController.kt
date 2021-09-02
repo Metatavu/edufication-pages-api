@@ -143,11 +143,11 @@ class StorageController {
                 .key(key)
                 .contentType(contentType)
                 .contentLength(contentLength)
+                .cacheControl("no-cache")
                 .acl(ObjectCannedACL.PUBLIC_READ)
                 .build()
 
             s3.putObject(request, RequestBody.fromInputStream(data, contentLength))
-
             getObjectFullPath(key = key)
         } catch (e: Exception) {
             throw FileStorageException(e)
