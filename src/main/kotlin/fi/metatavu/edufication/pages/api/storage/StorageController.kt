@@ -143,7 +143,7 @@ class StorageController {
                 .key(key)
                 .contentType(contentType)
                 .contentLength(contentLength)
-                .cacheControl("no-cache")
+                .metadata(mapOf("Cache-Control" to "no-cache"))
                 .acl(ObjectCannedACL.PUBLIC_READ)
                 .build()
 
