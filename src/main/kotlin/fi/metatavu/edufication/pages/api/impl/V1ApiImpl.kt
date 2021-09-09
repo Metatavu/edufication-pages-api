@@ -75,7 +75,10 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val path = page.path
         val parentPath = pagesController.getParentPath(path = path)
         val parent = if (parentPath != null) {
-            pagesController.findPageByPath(path = parentPath) ?: return createBadRequest("Invalid path, parent not found!")
+            pagesController.findPageByLanguageAndPath(
+                language = page.language,
+                path = parentPath
+            ) ?: return createBadRequest("Invalid path, parent not found!")
         } else {
             null
         }
@@ -115,7 +118,10 @@ class V1ApiImpl: V1Api, AbstractApi()  {
         val path = page.path
         val parentPath = pagesController.getParentPath(path = path)
         val parent = if (parentPath != null) {
-            pagesController.findPageByPath(path = parentPath) ?: return createBadRequest("Invalid path, parent not found!")
+            pagesController.findPageByLanguageAndPath(
+                language = page.language,
+                path = parentPath
+            ) ?: return createBadRequest("Invalid path, parent not found!")
         } else {
             null
         }
