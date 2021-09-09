@@ -116,11 +116,15 @@ class PagesController {
     /**
      * Finds a page by path
      *
+     * @param language language
      * @param path path
      * @return page or null if not found
      */
-    fun findPageByPath(path: String): Page? {
-        return pageDAO.findByPath(path = path)
+    fun findPageByLanguageAndPath(language: String, path: String): Page? {
+        return pageDAO.findByLanguageAndPath(
+            language = language,
+            path = path
+        )
     }
 
     /**

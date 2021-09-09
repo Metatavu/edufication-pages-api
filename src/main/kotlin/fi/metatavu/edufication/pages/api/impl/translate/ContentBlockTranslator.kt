@@ -25,6 +25,7 @@ class ContentBlockTranslator: AbstractTranslator<ContentBlock, fi.metatavu.edufi
 
     override fun translate(entity: ContentBlock): fi.metatavu.edufication.pages.api.model.ContentBlock {
         val translated = fi.metatavu.edufication.pages.api.model.ContentBlock()
+        translated.id = entity.id
         translated.layout = entity.layout
         translated.link = getLink(entity.link)
         translated.media = entity.media
