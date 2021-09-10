@@ -99,19 +99,26 @@ class PageDAO: AbstractDAO<Page>() {
     }
 
     /**
-     * Finds page by given path or null if not found
+     * Finds page by given language and path
      *
+     * @param language language
      * @param path path
      * @return page or null if not found
      */
-    fun findByPath(path: String): Page? {
+    fun findByLanguageAndPath(language: String, path: String): Page? {
         val entityManager = getEntityManager()
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteria = criteriaBuilder.createQuery(Page::class.java)
         val root = criteria.from(Page::class.java)
 
         criteria.select(root)
-        criteria.where(criteriaBuilder.like(root.get(Page_.path), path))
+        criteria.where(
+            criteriaBuilder.and(
+                criteriaBuilder.equal(root.get(Page_.language), language),
+                criteriaBuilder.equal(root.get(Page_.path), path)
+            )
+        )
+
         return getSingleResult(entityManager.createQuery(criteria))
     }
 
